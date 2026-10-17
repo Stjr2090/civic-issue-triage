@@ -1,9 +1,12 @@
 """Reports API: CRUD + routing."""
+import json
+import sqlite3
+
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app import classifier
 from app.db import DB_PATH
-import sqlite3
 
 router = APIRouter()
 
@@ -34,17 +37,47 @@ def create_report(payload: ReportIn):
         raise HTTPException(422, f"category must be one of {VALID_CATEGORIES}")
     if payload.source not in VALID_SOURCES:
         raise HTTPException(422, f"source must be one of {VALID_SOURCES}")
+    # T4: classify after basic validation. Defensive: classification failure
+    # must never block intake.
+    try:
+        result = classifier.classify(payload.title, payload.description)
+    except Exception:
+        result = classifier.keyword_classify(payload.title, payload.description)
+
+    # T9 rule stays binding: citizen category "other" always goes to review and
+    # never auto-routes. The citizen-submitted category is never overwritten
+    # (reconciliation #4); the AI suggestion is kept only in the reason/audit.
+    needs_review = 1 if payload.category == "other" else 0
+    if result["mode"] == "keyword":
+        needs_review = 1
+    if result["confidence"] < classifier.confidence_floor():
+        needs_review = 1
+    if result["suggested_category"] != payload.category:
+        needs_review = 1
+
     conn = get_conn()
     try:
-        needs_review = 1 if payload.category == "other" else 0
         cur = conn.execute(
             "INSERT INTO reports (title, description, category, reporter, location,"
-            " source, needs_review) VALUES (?,?,?,?,?,?,?)",
+            " source, urgency, confidence, reason, needs_review)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?)",
             (payload.title, payload.description, payload.category,
-             payload.reporter, payload.location, payload.source, needs_review),
+             payload.reporter, payload.location, payload.source,
+             result["urgency"], result["confidence"], result["reason"],
+             needs_review),
+        )
+        rid = cur.lastrowid
+        conn.execute(
+            "INSERT INTO audit_log (report_id, action, detail) VALUES (?,?,?)",
+            (rid, "classified", json.dumps({
+                "mode": result["mode"],
+                "suggested_category": result["suggested_category"],
+                "confidence": result["confidence"],
+                "urgency": result["urgency"],
+                "needs_review": bool(needs_review),
+            })),
         )
         conn.commit()
-        rid = cur.lastrowid
         row = conn.execute("SELECT * FROM reports WHERE id=?", (rid,)).fetchone()
         return dict(row)
     finally:
