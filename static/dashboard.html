@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Civic Issue Triage — Dashboard</title>
+<style>
+  :root {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+    --u1: #4ade80; --u2: #a3e635; --u3: #fbbf24; --u4: #fb923c; --u5: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); padding: 24px 16px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  h1 { font-size: 1.4rem; }
+  header a { color: var(--accent); font-size: .85rem; text-decoration: none; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .stat .n { font-size: 1.6rem; font-weight: 700; }
+  .stat .l { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filters select, .filters button {
+    padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text); font-size: .85rem;
+  }
+  .filters button { cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 12px; font-size: .85rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: 0; }
+  .urgent { border-left: 3px solid var(--u5); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
+  .st-new { background: rgba(56,189,248,.15); color: var(--accent); }
+  .st-routed { background: rgba(163,230,53,.15); color: var(--u2); }
+  .st-in_progress { background: rgba(251,191,36,.15); color: var(--u3); }
+  .st-resolved, .st-closed { background: rgba(74,222,128,.15); color: var(--u1); }
+  .rev { background: rgba(248,113,113,.15); color: var(--err); }
+  .urg { font-weight: 700; }
+  .u1 { color: var(--u1); } .u2 { color: var(--u2); } .u3 { color: var(--u3); }
+  .u4 { color: var(--u4); } .u5 { color: var(--u5); }
+  .empty { color: var(--muted); text-align: center; padding: 24px; font-size: .9rem; }
+  .rowbtn { padding: 4px 10px; font-size: .75rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--accent); cursor: pointer; }
+  .rowbtn:hover { background: rgba(56,189,248,.1); }
+  td.desc { color: var(--muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 640px) { .stats { grid-template-columns: repeat(2, 1fr); } td.desc { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Priority Dashboard</h1>
+    <a href="/">&larr; Submit a report</a>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="filters">
+    <select id="f-category">
+      <option value="">All categories</option>
+      <option value="roads">Roads</option>
+      <option value="water">Water</option>
+      <option value="waste">Waste</option>
+      <option value="public_services">Public services</option>
+    </select>
+    <select id="f-status">
+      <option value="">All statuses</option>
+      <option value="new">New</option>
+      <option value="routed">Routed</option>
+      <option value="in_progress">In progress</option>
+      <option value="resolved">Resolved</option>
+      <option value="closed">Closed</option>
+    </select>
+    <select id="f-source">
+      <option value="">All sources</option>
+      <option value="web">Web</option>
+      <option value="telegram">Telegram</option>
+      <option value="api">API</option>
+    </select>
+    <select id="f-review">
+      <option value="">All reports</option>
+      <option value="1">Needs review only</option>
+      <option value="0">No review needed</option>
+    </select>
+    <button id="reload">Refresh</button>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Title</th><th class="desc-col">Description</th><th>Category</th>
+        <th>Urgency</th><th>Status</th><th>Source</th><th></th>
+      </tr>
+    </thead>
+    <tbody id="rows"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+(function () {
+  var CATS = { roads: "Roads", water: "Water", waste: "Waste", public_services: "Public services" };
+  var el = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function loadStats() {
+    fetch("/api/stats").then(function (r) { return r.json(); }).then(function (s) {
+      var items = [
+        { n: s.total, l: "Total reports" },
+        { n: s.by_status.new || 0, l: "New" },
+        { n: s.by_status.routed || 0, l: "Routed" },
+        { n: s.by_status.in_progress || 0, l: "In progress" },
+        { n: s.urgent_open, l: "Urgent open (urg ≥ 4)" }
+      ];
+      el("stats").innerHTML = items.map(function (i) {
+        return '<div class="stat"><div class="n">' + i.n + '</div><div class="l">' + i.l + "</div></div>";
+      }).join("");
+    });
+  }
+
+  function loadRows() {
+    var p = new URLSearchParams();
+    var cat = el("f-category").value, st = el("f-status").value,
+        src = el("f-source").value, rev = el("f-review").value;
+    if (cat) p.set("category", cat);
+    if (st) p.set("status", st);
+    if (src) p.set("source", src);
+    if (rev !== "") p.set("needs_review", rev);
+
+    fetch("/api/reports?" + p.toString()).then(function (r) { return r.json(); }).then(function (rows) {
+      if (!rows.length) {
+        el("rows").innerHTML = '<tr><td colspan="8" class="empty">No reports match these filters.</td></tr>';
+        return;
+      }
+      el("rows").innerHTML = rows.map(function (r) {
+        var urgCls = "u" + Math.min(r.urgency, 5);
+        var isUrgent = r.urgency >= 4 && r.status !== "resolved" && r.status !== "closed";
+        return "<tr" + (isUrgent ? ' class="urgent"' : "") + ">" +
+          "<td>" + r.id + "</td>" +
+          "<td>" + esc(r.title) + (r.needs_review ? ' <span class="badge rev">review</span>' : "") + "</td>" +
+          '<td class="desc">' + esc((r.description || "").slice(0, 80)) + "</td>" +
+          "<td>" + (CATS[r.category] || esc(r.category)) + "</td>" +
+          '<td class="urg ' + urgCls + '">' + r.urgency + "/5</td>" +
+          '<td><span class="badge st-' + esc(r.status) + '">' + esc(r.status).replace("_", " ") + "</span></td>" +
+          "<td>" + esc(r.source) + "</td>" +
+          "<td>" + (r.status === "new" ? '<button class="rowbtn" data-id="' + r.id + '">Route</button>' : "") + "</td>" +
+          "</tr>";
+      }).join("");
+    });
+  }
+
+  el("rows").addEventListener("click", function (e) {
+    var btn = e.target.closest(".rowbtn");
+    if (!btn) return;
+    btn.disabled = true;
+    fetch("/api/route/" + btn.dataset.id, { method: "GET" })
+      .then(function (r) { return r.json(); })
+      .then(function (b) { loadRows(); loadStats(); });
+  });
+
+  ["f-category", "f-status", "f-source", "f-review"].forEach(function (id) {
+    el(id).addEventListener("change", loadRows);
+  });
+  el("reload").addEventListener("click", function () { loadRows(); loadStats(); });
+
+  loadStats();
+  loadRows();
+  setInterval(function () { loadRows(); loadStats(); }, 30000);
+})();
+</script>
+</body>
+</html>
