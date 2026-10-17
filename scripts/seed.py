@@ -11,6 +11,11 @@ SEED = [
     ("National Water & Sewerage Corp", "water", "water@example.gov", 1),
     ("Municipal Waste Management Dept", "waste", "waste@example.gov", 1),
     ("Town Clerk Office - Public Services", "public_services", "clerk@example.gov", 1),
+    # Lower-priority fallbacks, used when the primary authority is inactive.
+    ("Regional Roads Contractor", "roads", "roads-fallback@example.gov", 0),
+    ("Water Services Ombudsman", "water", "water-fallback@example.gov", 0),
+    ("Regional Waste Contractor", "waste", "waste-fallback@example.gov", 0),
+    ("Public Services Complaints Desk", "public_services", "clerk-fallback@example.gov", 0),
 ]
 
 conn = sqlite3.connect(DB_PATH)

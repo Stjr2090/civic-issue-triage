@@ -100,6 +100,61 @@ def test_routing():
     assert r2.json()["routed_to"]["name"] == "Town Clerk Office"
 
 
+def test_list_authorities_and_category_filter():
+    import sqlite3
+    conn = sqlite3.connect(db.DB_PATH)
+    conn.executemany(
+        "INSERT OR IGNORE INTO authorities (name, category, contact, priority)"
+        " VALUES (?,?,?,?)",
+        [
+            ("Roads Authority", "roads", "roads@example.gov", 1),
+            ("Roads Fallback", "roads", "roads-fallback@example.gov", 0),
+            ("Water Authority", "water", "water@example.gov", 1),
+        ],
+    )
+    conn.commit()
+    conn.close()
+
+    r = client.get("/api/authorities")
+    assert r.status_code == 200
+    rows = r.json()
+    assert any(row["category"] == "roads" for row in rows)
+    assert any(row["category"] == "water" for row in rows)
+
+    r2 = client.get("/api/authorities", params={"category": "roads"})
+    assert r2.status_code == 200
+    roads = r2.json()
+    assert roads and all(row["category"] == "roads" for row in roads)
+    priorities = [row["priority"] for row in roads]
+    assert priorities == sorted(priorities, reverse=True)
+
+
+def test_route_prefers_higher_priority():
+    import sqlite3
+    conn = sqlite3.connect(db.DB_PATH)
+    conn.executemany(
+        "INSERT OR IGNORE INTO authorities (name, category, contact, priority)"
+        " VALUES (?,?,?,?)",
+        [
+            ("Primary Waste Authority", "waste", "waste@example.gov", 1),
+            ("Fallback Waste Authority", "waste", "waste-fallback@example.gov", 0),
+        ],
+    )
+    conn.commit()
+    conn.close()
+
+    r = client.post("/api/reports", json={
+        "title": "Missed waste collection",
+        "description": "Bins on this street have not been collected for two weeks.",
+        "category": "waste",
+    })
+    rid = r.json()["id"]
+    r2 = client.get(f"/api/route/{rid}")
+    assert r2.status_code == 200
+    assert r2.json()["routed_to"]["name"] == "Primary Waste Authority"
+    assert r2.json()["routed_to"]["contact"] == "waste@example.gov"
+
+
 def test_dashboard_stats_shape():
     r = client.get("/api/stats")
     assert r.status_code == 200

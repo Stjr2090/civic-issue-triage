@@ -146,6 +146,28 @@ def stats():
         conn.close()
 
 
+@router.get("/authorities")
+def list_authorities(
+    active: int | None = None,
+    category: str | None = None,
+):
+    """List the routing table, ordered by category then priority DESC."""
+    q = "SELECT * FROM authorities WHERE 1=1"
+    params: list = []
+    if active is not None:
+        q += " AND active=?"
+        params.append(1 if active else 0)
+    if category:
+        q += " AND category=?"
+        params.append(category)
+    q += " ORDER BY category, priority DESC"
+    conn = get_conn()
+    try:
+        return [dict(r) for r in conn.execute(q, params).fetchall()]
+    finally:
+        conn.close()
+
+
 @router.get("/route/{report_id}")
 def route_report(report_id: int):
     """Route a report to the active authority for its category."""
