@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS reports (
     title       TEXT    NOT NULL,
     description TEXT    NOT NULL,
     category    TEXT    NOT NULL
-                CHECK (category IN ('roads','water','waste','public_services')),
+                CHECK (category IN ('roads','water','waste','public_services','other')),
     urgency     INTEGER NOT NULL DEFAULT 3
                 CHECK (urgency BETWEEN 1 AND 5),
     confidence  REAL,

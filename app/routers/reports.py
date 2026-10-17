@@ -7,7 +7,7 @@ import sqlite3
 
 router = APIRouter()
 
-VALID_CATEGORIES = ("roads", "water", "waste", "public_services")
+VALID_CATEGORIES = ("roads", "water", "waste", "public_services", "other")
 VALID_SOURCES = ("web", "telegram", "api")
 VALID_STATUSES = ("new", "routed", "in_progress", "resolved", "closed")
 
@@ -36,11 +36,12 @@ def create_report(payload: ReportIn):
         raise HTTPException(422, f"source must be one of {VALID_SOURCES}")
     conn = get_conn()
     try:
+        needs_review = 1 if payload.category == "other" else 0
         cur = conn.execute(
-            "INSERT INTO reports (title, description, category, reporter, location, source)"
-            " VALUES (?,?,?,?,?,?)",
+            "INSERT INTO reports (title, description, category, reporter, location,"
+            " source, needs_review) VALUES (?,?,?,?,?,?,?)",
             (payload.title, payload.description, payload.category,
-             payload.reporter, payload.location, payload.source),
+             payload.reporter, payload.location, payload.source, needs_review),
         )
         conn.commit()
         rid = cur.lastrowid

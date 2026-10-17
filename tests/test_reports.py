@@ -52,6 +52,25 @@ def test_category_validation():
     assert r.status_code == 422
 
 
+def test_other_category_lands_in_review_queue():
+    r = client.post("/api/reports", json={
+        "title": "Unclassifiable complaint",
+        "description": "Something odd that does not fit any known category.",
+        "category": "other",
+    })
+    assert r.status_code == 201, r.text
+    assert r.json()["needs_review"] == 1
+
+
+def test_unknown_category_still_rejected():
+    r = client.post("/api/reports", json={
+        "title": "Alien sighting",
+        "description": "This category does not exist anywhere at all.",
+        "category": "aliens",
+    })
+    assert r.status_code == 422
+
+
 def test_list_filter_by_category():
     client.post("/api/reports", json={
         "title": "No water for days",
