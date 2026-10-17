@@ -181,3 +181,23 @@ def test_telegram_source_roundtrip_and_queue_filter():
         "category": "water",
         "source": "smoke_signal",
     }).status_code == 422
+
+
+def test_authorities_active_bool_filter():
+    """T6 regression: ?active=false must parse as bool, not 422 int_parsing."""
+    r = client.get("/api/authorities", params={"active": "false"})
+    assert r.status_code == 200
+    rows = r.json()
+    assert all(row["active"] == 0 for row in rows)
+    r2 = client.get("/api/authorities", params={"active": "true"})
+    assert r2.status_code == 200
+    assert all(row["active"] == 1 for row in r2.json())
+
+
+def test_reports_needs_review_bool_filter():
+    r = client.get("/api/reports", params={"needs_review": "true"})
+    assert r.status_code == 200
+    assert all(row["needs_review"] == 1 for row in r.json())
+    r2 = client.get("/api/reports", params={"needs_review": "false"})
+    assert r2.status_code == 200
+    assert all(row["needs_review"] == 0 for row in r2.json())
