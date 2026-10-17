@@ -16,7 +16,7 @@ SEED = [
 conn = sqlite3.connect(DB_PATH)
 conn.executescript(SCHEMA)
 conn.executemany(
-    "INSERT INTO authorities (name, category, contact, priority)"
+    "INSERT OR IGNORE INTO authorities (name, category, contact, priority)"
     " VALUES (?,?,?,?)",
     SEED,
 )

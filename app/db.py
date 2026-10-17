@@ -6,10 +6,15 @@ Three tables (obbo's design, unchanged):
 - authorities: local authority routing table (data, not code).
 - audit_log: append-only trail of routing/assignment decisions.
 """
+import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent / "data" / "civic.db"
+DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "data" / "civic.db"
+# Deployment-overridable so the Lightsail volume persists across redeploys.
+DB_PATH = Path(os.environ.get("DATABASE_PATH") or DEFAULT_DB_PATH)
+# Fresh clones have no data/ dir; create it before the import-time connect.
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 SCHEMA = """
 PRAGMA journal_mode=WAL;
@@ -27,6 +32,9 @@ CREATE TABLE IF NOT EXISTS reports (
     reason      TEXT,
     reporter    TEXT,
     location    TEXT,
+    source      TEXT    NOT NULL DEFAULT 'web'
+                CHECK (source IN ('web','telegram','api')),
+    needs_review INTEGER NOT NULL DEFAULT 0,
     status      TEXT    NOT NULL DEFAULT 'new'
                 CHECK (status IN ('new','routed','in_progress','resolved','closed')),
     dup_of      INTEGER REFERENCES reports(id),
@@ -56,6 +64,8 @@ CREATE INDEX IF NOT EXISTS idx_reports_status   ON reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_category ON reports(category);
 CREATE INDEX IF NOT EXISTS idx_reports_created  ON reports(created_at);
 CREATE INDEX IF NOT EXISTS idx_authorities_cat  ON authorities(category, active);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_authorities_name_cat
+    ON authorities(name, category);
 """
 
 conn = sqlite3.connect(DB_PATH)
