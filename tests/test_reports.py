@@ -105,3 +105,24 @@ def test_dashboard_stats_shape():
     assert r.status_code == 200
     body = r.json()
     assert "by_status" in body and "by_category" in body
+
+
+def test_telegram_source_roundtrip_and_queue_filter():
+    r = client.post("/api/reports", json={
+        "title": "Water pipe burst via telegram",
+        "description": "Report submitted through the telegram intake bot path.",
+        "category": "water",
+        "source": "telegram",
+    })
+    assert r.status_code == 201, r.text
+    assert r.json()["source"] == "telegram"
+    q = client.get("/api/reports", params={"source": "telegram"})
+    assert q.status_code == 200
+    rows = q.json()
+    assert rows and all(row["source"] == "telegram" for row in rows)
+    assert client.post("/api/reports", json={
+        "title": "Bad source value",
+        "description": "Source value that is not allowed at all.",
+        "category": "water",
+        "source": "smoke_signal",
+    }).status_code == 422

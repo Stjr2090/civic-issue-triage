@@ -8,6 +8,7 @@ import sqlite3
 router = APIRouter()
 
 VALID_CATEGORIES = ("roads", "water", "waste", "public_services")
+VALID_SOURCES = ("web", "telegram", "api")
 VALID_STATUSES = ("new", "routed", "in_progress", "resolved", "closed")
 
 
@@ -17,6 +18,7 @@ class ReportIn(BaseModel):
     category: str
     reporter: str | None = None
     location: str | None = None
+    source: str = "web"  # web | telegram | api (telegram path per design)
 
 
 def get_conn():
@@ -30,13 +32,15 @@ def get_conn():
 def create_report(payload: ReportIn):
     if payload.category not in VALID_CATEGORIES:
         raise HTTPException(422, f"category must be one of {VALID_CATEGORIES}")
+    if payload.source not in VALID_SOURCES:
+        raise HTTPException(422, f"source must be one of {VALID_SOURCES}")
     conn = get_conn()
     try:
         cur = conn.execute(
-            "INSERT INTO reports (title, description, category, reporter, location)"
-            " VALUES (?,?,?,?,?)",
+            "INSERT INTO reports (title, description, category, reporter, location, source)"
+            " VALUES (?,?,?,?,?,?)",
             (payload.title, payload.description, payload.category,
-             payload.reporter, payload.location),
+             payload.reporter, payload.location, payload.source),
         )
         conn.commit()
         rid = cur.lastrowid
@@ -50,6 +54,8 @@ def create_report(payload: ReportIn):
 def list_reports(
     status: str | None = None,
     category: str | None = None,
+    source: str | None = None,
+    needs_review: int | None = None,
     limit: int = Query(50, le=200),
 ):
     q = "SELECT * FROM reports WHERE 1=1"
@@ -60,6 +66,12 @@ def list_reports(
     if category:
         q += " AND category=?"
         params.append(category)
+    if source:
+        q += " AND source=?"
+        params.append(source)
+    if needs_review is not None:
+        q += " AND needs_review=?"
+        params.append(1 if needs_review else 0)
     q += " ORDER BY urgency DESC, created_at DESC LIMIT ?"
     params.append(limit)
     conn = get_conn()
