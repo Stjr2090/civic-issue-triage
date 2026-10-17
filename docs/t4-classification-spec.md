@@ -39,7 +39,7 @@ No key or model failure: keyword rules (English seeds plus Luganda and Swahili k
 
 ## Tests
 
-The existing 11 tests keep passing (contract unchanged). New tests use mocked model responses: happy path, low confidence, disagreement, keyword fallback, and `other` never routed.
+The existing 13 tests keep passing (contract unchanged). New tests use mocked model responses: happy path, low confidence, disagreement, keyword fallback, and `other` never routed.
 
 ## Out of scope (post-hackathon)
 
