@@ -1,6 +1,6 @@
 # T4 Classification: decision scoring spec
 
-Status: approved by PM (Stephen) via Fo on 2026-10-17. Implementation is slot-held on the app-facing `GROQ_API_KEY` in the runtime env.
+Status: approved by PM (Stephen) via the build assistant (Fo) on 2026-10-17. Implementation is slot-held on the app-facing `GROQ_API_KEY` in the runtime env.
 
 ## Purpose
 
