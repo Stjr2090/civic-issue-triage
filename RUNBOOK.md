@@ -7,6 +7,9 @@ image problems (e.g. an arm64 laptop image failing on the x86 instance).
 ## Shared box (Lightsail already runs another app)
 
 Discover before binding:
+
+Step 0 — docker permissions: run `docker info` first. If it fails on permissions, either prefix every docker/compose command with `sudo`, or add your user to the group once (`sudo usermod -aG docker $USER`, then log out and back in).
+
 ```sh
 ss -tlnp          # taken ports - avoid them
 docker ps         # the other app's containers
