@@ -35,6 +35,7 @@
   th { color: var(--muted); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
   tr:last-child td { border-bottom: 0; }
   .urgent { border-left: 3px solid var(--u5); }
+  .row-needs-review { background: rgba(248,113,113,.06); }
   .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
   .st-new { background: rgba(56,189,248,.15); color: var(--accent); }
   .st-routed { background: rgba(163,230,53,.15); color: var(--u2); }
@@ -84,7 +85,7 @@
     </select>
     <select id="f-review">
       <option value="">All reports</option>
-      <option value="1">Needs review only</option>
+      <option value="1">Needs review</option>
       <option value="0">No review needed</option>
     </select>
     <button id="reload">Refresh</button>
@@ -144,7 +145,10 @@
       el("rows").innerHTML = rows.map(function (r) {
         var urgCls = "u" + Math.min(r.urgency, 5);
         var isUrgent = r.urgency >= 4 && r.status !== "resolved" && r.status !== "closed";
-        return "<tr" + (isUrgent ? ' class="urgent"' : "") + ">" +
+        var rowCls = [];
+        if (isUrgent) rowCls.push("urgent");
+        if (r.needs_review) rowCls.push("row-needs-review");
+        return "<tr" + (rowCls.length ? ' class="' + rowCls.join(" ") + '"' : "") + ">" +
           "<td>" + r.id + "</td>" +
           "<td>" + esc(r.title) + (r.needs_review ? ' <span class="badge rev">review</span>' : "") + "</td>" +
           '<td class="desc">' + esc((r.description || "").slice(0, 80)) + "</td>" +

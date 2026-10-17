@@ -55,7 +55,7 @@ def list_reports(
     status: str | None = None,
     category: str | None = None,
     source: str | None = None,
-    needs_review: int | None = None,
+    needs_review: bool | None = None,
     limit: int = Query(50, le=200),
 ):
     q = "SELECT * FROM reports WHERE 1=1"
@@ -148,7 +148,7 @@ def stats():
 
 @router.get("/authorities")
 def list_authorities(
-    active: int | None = None,
+    active: bool | None = None,
     category: str | None = None,
 ):
     """List the routing table, ordered by category then priority DESC."""
