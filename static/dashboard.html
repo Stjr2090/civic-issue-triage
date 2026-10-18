@@ -75,6 +75,14 @@
 <div class="wrap">
   <header>
     <h1>Priority Dashboard</h1>
+    <span id="auth-box" style="display:flex;gap:8px;align-items:center;font-size:.85rem;">
+      <input id="auth-user" placeholder="admin user" autocomplete="username"
+        style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);width:9rem;">
+      <input id="auth-pass" type="password" placeholder="password" autocomplete="current-password"
+        style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);width:9rem;">
+      <button id="auth-btn" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;">Sign in</button>
+      <span id="auth-state" style="color:var(--muted);"></span>
+    </span>
     <a href="/">&larr; Submit a report</a>
   </header>
 
@@ -307,6 +315,39 @@
     el(id).addEventListener("change", loadRows);
   });
   el("reload").addEventListener("click", function () { loadRows(); loadStats(); });
+
+  // Admin sign-in: session cookie unlocks detail view + route buttons.
+  var authBtn = el("auth-btn");
+  authBtn.addEventListener("click", function () {
+    fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        username: el("auth-user").value,
+        password: el("auth-pass").value,
+      }),
+    }).then(function (r) {
+      if (r.ok) {
+        el("auth-state").textContent = "signed in";
+        el("auth-state").style.color = "var(--u1)";
+        el("auth-pass").value = "";
+        loadRows(); loadStats();
+      } else if (r.status === 503) {
+        el("auth-state").textContent = "admin auth not configured";
+        el("auth-state").style.color = "var(--err)";
+      } else {
+        el("auth-state").textContent = "invalid credentials";
+        el("auth-state").style.color = "var(--err)";
+      }
+    }).catch(function () {
+      el("auth-state").textContent = "sign-in failed";
+      el("auth-state").style.color = "var(--err)";
+    });
+  });
+  el("auth-pass").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") authBtn.click();
+  });
 
   loadStats();
   loadRows();
