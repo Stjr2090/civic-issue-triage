@@ -36,6 +36,28 @@ ls /etc/nginx /etc/caddy 2>/dev/null   # reverse proxy present?
    curl localhost:8000/api/stats
    ```
 
+## Localhost verification (no Docker needed)
+
+For a quick local check on a laptop (Steph's visual pass) or a scratch run
+on a shared box, plain uvicorn is enough — and a scratch run on a box that
+already serves an app must use a scratch port and scratch DB so it cannot
+collide with the live server:
+
+```sh
+git clone https://github.com/Stjr2090/civic-issue-triage && cd civic-issue-triage
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+python scripts/seed.py                                  # 8 authorities
+port=8123; db=$(mktemp -u /tmp/reporta-XXXX.db)         # scratch port + DB
+DATABASE_PATH="$db" PORT=$port .venv/bin/uvicorn app.main:app --port $port
+curl "localhost:$port/api/stats"                        # 200 when serving
+```
+
+**Known limit, by design:** `scripts/seed.py` seeds authorities only — a
+fresh clone boots with **zero reports** and an empty dashboard until real
+submissions arrive (see `deploy/lightsail-reporta` for the demo-report
+seeder that fills this on the deploy box).
+
 ## Configuration environment variables
 
 - The app reads its Groq configuration from the environment at call time:
