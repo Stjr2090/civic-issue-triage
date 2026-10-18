@@ -11,7 +11,7 @@ from app.db import DB_PATH
 router = APIRouter()
 
 VALID_CATEGORIES = ("roads", "water", "waste", "public_services", "other")
-VALID_SOURCES = ("web", "telegram", "api")
+VALID_SOURCES = ("web", "telegram", "api", "whatsapp")
 VALID_STATUSES = ("new", "routed", "in_progress", "resolved", "closed")
 
 
