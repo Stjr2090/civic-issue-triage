@@ -77,14 +77,14 @@ The bot uses outbound long-polling only — no inbound ports. A guided conversat
 pytest
 ```
 
-23 tests; they require no API keys and no network — CI-safe by design.
+27 tests; they require no API keys and no network — CI-safe by design.
 
 ## Known limitations
 
 This is a hackathon prototype; we would rather state its edges than hide them:
 
 - **Demo-grade auth.** Intake is public by design; dashboard mutation endpoints are unauthenticated. Add authentication before any real deployment.
-- **Single-node SQLite.** One file, no migration framework — schema changes mean re-create and re-seed.
+- **Single-node SQLite.** One file; schema changes now run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
 - **Confidence is model-reported, not calibrated.** The review threshold is a sensible heuristic, not a measured operating point.
 - **Keyword fallback is blunt.** Substring matching can over-flag (the safe direction), and the safety terms are not an exhaustive multilingual list.
 - **Intake is unthrottled.** No rate limiting on either intake path.
