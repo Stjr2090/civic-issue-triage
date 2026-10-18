@@ -127,6 +127,76 @@ def get_report(report_id: int):
         conn.close()
 
 
+@router.get("/reports/{report_id}/detail")
+def report_detail(report_id: int):
+    """Admin case detail: report, analysis, routing history, options, attachments."""
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            "SELECT * FROM reports WHERE id=?", (report_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(404, "report not found")
+        report = dict(row)
+
+        # T4 state rule: legacy rows written before classification are a rendered
+        # state, never an error.
+        if report["confidence"] is None or report["reason"] is None:
+            state = "not classified (pre-T4 report)"
+        else:
+            state = "classified"
+        analysis = {
+            "state": state,
+            "confidence": report["confidence"],
+            "reason": report["reason"],
+            "urgency": report["urgency"],
+            "needs_review": report["needs_review"],
+        }
+
+        routing_history = []
+        for entry in conn.execute(
+            "SELECT * FROM audit_log WHERE report_id=? ORDER BY created_at, id",
+            (report_id,),
+        ).fetchall():
+            item = dict(entry)
+            # `classified` stores a JSON blob; `routed` an authority name and
+            # `status_change` a status string, both already render-ready.
+            if item["action"] == "classified" and item["detail"] is not None:
+                try:
+                    item["detail"] = json.loads(item["detail"])
+                except (ValueError, TypeError):
+                    pass
+            routing_history.append(item)
+
+        next_options = [
+            dict(a)
+            for a in conn.execute(
+                "SELECT * FROM authorities WHERE category=? AND active=1"
+                " ORDER BY priority DESC",
+                (report["category"],),
+            ).fetchall()
+        ]
+
+        attachments = [
+            dict(a)
+            for a in conn.execute(
+                "SELECT id, media_type, file_ref, created_at"
+                " FROM reports_attachments WHERE report_id=? ORDER BY id",
+                (report_id,),
+            ).fetchall()
+        ]
+
+        return {
+            "report": report,
+            "analysis": analysis,
+            "routing_history": routing_history,
+            "next_options": next_options,
+            "attachments": attachments,
+        }
+    finally:
+        conn.close()
+
+
 @router.patch("/reports/{report_id}/status")
 def update_status(report_id: int, status: str = Query(...)):
     if status not in VALID_STATUSES:

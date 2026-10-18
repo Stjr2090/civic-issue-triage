@@ -49,6 +49,25 @@
   .rowbtn { padding: 4px 10px; font-size: .75rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--accent); cursor: pointer; }
   .rowbtn:hover { background: rgba(56,189,248,.1); }
   td.desc { color: var(--muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover td { background: rgba(56,189,248,.05); }
+  .detail-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; justify-content: flex-end; z-index: 50; }
+  .detail-backdrop[hidden] { display: none; }
+  .detail-panel { position: relative; width: min(540px, 100%); height: 100%; overflow-y: auto; background: var(--card); border-left: 1px solid var(--border); padding: 20px; }
+  .detail-close { position: absolute; top: 8px; right: 12px; background: transparent; border: 0; color: var(--muted); font-size: 1.7rem; line-height: 1; cursor: pointer; }
+  .detail-close:hover { color: var(--text); }
+  .detail h2 { font-size: 1.05rem; margin: 4px 0 10px; padding-right: 28px; }
+  .detail h3 { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 16px 0 6px; }
+  .detail .kv { font-size: .82rem; display: flex; gap: 8px; margin: 3px 0; }
+  .detail .kv b { color: var(--muted); font-weight: 600; min-width: 96px; }
+  .detail .state { color: var(--muted); font-style: italic; font-size: .82rem; }
+  .detail p.body { font-size: .85rem; color: var(--muted); margin: 10px 0; }
+  .detail ul { list-style: none; margin: 0; padding: 0; font-size: .82rem; }
+  .detail li { padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .detail li:last-child { border-bottom: 0; }
+  .detail .act { color: var(--accent); font-weight: 600; }
+  .detail .routebtn { margin-top: 16px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(56,189,248,.12); color: var(--accent); cursor: pointer; font-size: .85rem; }
+  .detail .routebtn[disabled] { opacity: .45; cursor: not-allowed; }
   @media (max-width: 640px) { .stats { grid-template-columns: repeat(2, 1fr); } td.desc { display: none; } }
 </style>
 </head>
@@ -102,9 +121,16 @@
   </table>
 </div>
 
+<div class="detail-backdrop" id="detail-backdrop" hidden>
+  <div class="detail-panel" role="dialog" aria-modal="true" aria-label="Report detail">
+    <button class="detail-close" id="detail-close" aria-label="Close detail">&times;</button>
+    <div class="detail" id="detail-body"></div>
+  </div>
+</div>
+
 <script>
 (function () {
-  var CATS = { roads: "Roads", water: "Water", waste: "Waste", public_services: "Public services" };
+  var CATS = { roads: "Roads", water: "Water", waste: "Waste", public_services: "Public services", other: "Other" };
   var el = function (id) { return document.getElementById(id); };
 
   function esc(s) {
@@ -145,10 +171,10 @@
       el("rows").innerHTML = rows.map(function (r) {
         var urgCls = "u" + Math.min(r.urgency, 5);
         var isUrgent = r.urgency >= 4 && r.status !== "resolved" && r.status !== "closed";
-        var rowCls = [];
+        var rowCls = ["clickable"];
         if (isUrgent) rowCls.push("urgent");
         if (r.needs_review) rowCls.push("row-needs-review");
-        return "<tr" + (rowCls.length ? ' class="' + rowCls.join(" ") + '"' : "") + ">" +
+        return '<tr class="' + rowCls.join(" ") + '" data-id="' + r.id + '">' +
           "<td>" + r.id + "</td>" +
           "<td>" + esc(r.title) + (r.needs_review ? ' <span class="badge rev">review</span>' : "") + "</td>" +
           '<td class="desc">' + esc((r.description || "").slice(0, 80)) + "</td>" +
@@ -162,13 +188,119 @@
     });
   }
 
+  var backdrop = el("detail-backdrop");
+  var detailBody = el("detail-body");
+
+  function closeDetail() {
+    backdrop.hidden = true;
+    detailBody.innerHTML = "";
+  }
+
+  function openDetail(id) {
+    detailBody.innerHTML = '<p class="state">Loading…</p>';
+    backdrop.hidden = false;
+    fetch("/api/reports/" + id + "/detail").then(function (r) {
+      if (!r.ok) throw new Error("detail " + r.status);
+      return r.json();
+    }).then(renderDetail).catch(function () {
+      detailBody.innerHTML = '<p class="state">Could not load this report.</p>';
+      backdrop.hidden = false;
+    });
+  }
+
+  function renderDetail(d) {
+    var rep = d.report, an = d.analysis, hist = d.routing_history,
+        opts = d.next_options, atts = d.attachments;
+    var h = [];
+    h.push("<h2>#" + rep.id + " " + esc(rep.title) + "</h2>");
+    h.push('<div class="kv"><b>Status</b><span>' + esc(rep.status) + "</span></div>");
+    h.push('<div class="kv"><b>Category</b><span>' + (CATS[rep.category] || esc(rep.category)) + "</span></div>");
+    h.push('<div class="kv"><b>Source</b><span>' + esc(rep.source) + "</span></div>");
+    h.push('<div class="kv"><b>Reporter</b><span>' + esc(rep.reporter || "—") + "</span></div>");
+    h.push('<div class="kv"><b>Location</b><span>' + esc(rep.location || "—") + "</span></div>");
+    h.push('<p class="body">' + esc(rep.description) + "</p>");
+
+    h.push("<h3>Analysis</h3>");
+    if (an.state === "not classified (pre-T4 report)") {
+      h.push('<div class="state">not classified (pre-T4 report)</div>');
+    } else {
+      h.push('<div class="kv"><b>State</b><span>classified</span></div>');
+      h.push('<div class="kv"><b>Confidence</b><span>' + esc(an.confidence) + "</span></div>");
+      h.push('<div class="kv"><b>Urgency</b><span>' + esc(an.urgency) + "/5</span></div>");
+      h.push('<div class="kv"><b>Needs review</b><span>' + (an.needs_review ? "yes" : "no") + "</span></div>");
+      h.push('<div class="kv"><b>Reason</b><span>' + esc(an.reason) + "</span></div>");
+    }
+
+    h.push("<h3>Attachments</h3>");
+    if (!atts.length) {
+      h.push('<div class="state">no attachment</div>');
+    } else {
+      h.push("<ul>" + atts.map(function (a) {
+        return '<li><span class="act">' + esc(a.media_type) + "</span> " + esc(a.file_ref) +
+          ' <span class="state">' + esc(a.created_at) + "</span></li>";
+      }).join("") + "</ul>");
+    }
+
+    h.push("<h3>Routing history</h3>");
+    if (!hist.length) {
+      h.push('<div class="state">no routing history yet</div>');
+    } else {
+      h.push("<ul>" + hist.map(function (ev) {
+        var txt;
+        if (ev.action === "classified" && ev.detail && typeof ev.detail === "object") {
+          txt = esc(ev.detail.suggested_category || ev.detail.mode || JSON.stringify(ev.detail));
+        } else {
+          txt = esc(ev.detail);
+        }
+        return '<li><span class="act">' + esc(ev.action) + "</span> " + txt +
+          ' <span class="state">' + esc(ev.created_at) + "</span></li>";
+      }).join("") + "</ul>");
+    }
+
+    h.push("<h3>Next routing options</h3>");
+    if (!opts.length) {
+      h.push('<div class="state">no active authority for category</div>');
+    } else {
+      h.push("<ul>" + opts.map(function (o) {
+        return "<li>" + esc(o.name) +
+          ' <span class="state">priority ' + esc(o.priority) + "</span></li>";
+      }).join("") + "</ul>");
+    }
+
+    var canRoute = rep.status === "new" && opts.length > 0;
+    h.push('<button class="routebtn" id="detail-route" data-id="' + rep.id + '"' +
+      (canRoute ? "" : " disabled") + ">Route to authority</button>");
+    detailBody.innerHTML = h.join("");
+
+    var rbtn = el("detail-route");
+    if (rbtn && canRoute) {
+      rbtn.addEventListener("click", function () {
+        rbtn.disabled = true;
+        fetch("/api/route/" + rbtn.dataset.id, { method: "GET" })
+          .then(function (r) { return r.json(); })
+          .then(function () { loadRows(); loadStats(); openDetail(rep.id); });
+      });
+    }
+  }
+
+  el("detail-close").addEventListener("click", closeDetail);
+  backdrop.addEventListener("click", function (e) { if (e.target === backdrop) closeDetail(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !backdrop.hidden) closeDetail();
+  });
+
   el("rows").addEventListener("click", function (e) {
     var btn = e.target.closest(".rowbtn");
-    if (!btn) return;
-    btn.disabled = true;
-    fetch("/api/route/" + btn.dataset.id, { method: "GET" })
-      .then(function (r) { return r.json(); })
-      .then(function (b) { loadRows(); loadStats(); });
+    if (btn) {
+      e.stopPropagation();
+      btn.disabled = true;
+      fetch("/api/route/" + btn.dataset.id, { method: "GET" })
+        .then(function (r) { return r.json(); })
+        .then(function (b) { loadRows(); loadStats(); });
+      return;
+    }
+    var tr = e.target.closest("tr[data-id]");
+    if (tr) openDetail(tr.dataset.id);
   });
 
   ["f-category", "f-status", "f-source", "f-review"].forEach(function (id) {
