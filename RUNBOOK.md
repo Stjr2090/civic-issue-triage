@@ -36,6 +36,25 @@ ls /etc/nginx /etc/caddy 2>/dev/null   # reverse proxy present?
    curl localhost:8000/api/stats
    ```
 
+## Configuration environment variables
+
+- The app reads its Groq configuration from the environment at call time:
+  `GROQ_API_KEY` (required for AI classification; without it the classifier
+  fails closed into keyword mode) and `GROQ_MODEL` (optional override of the
+  classifier's chat model).
+- Audio transcription (Phase 3) adds `WHISPER_MODEL` (transcriber model,
+  separate from the classifier's `GROQ_MODEL`) and three quality-threshold
+  knobs: `TRANSCRIPT_LOGPROB_FLOOR`, `TRANSCRIPT_NO_SPEECH_CEIL`,
+  `TRANSCRIPT_COMPRESSION_RANGE`. Unset thresholds fall back to the module
+  defaults documented in `docs/phase3-audio-intake-spec.md`.
+- `docker-compose.yml` passes these through from the host environment with
+  empty defaults: an unset variable arrives as an empty string, which keeps
+  the app fail-closed (no key -> keyword mode / transcriber unavailable)
+  instead of crashing compose interpolation.
+- The live dev path today is bare uvicorn with the environment from the
+  shell; compose is the container path. Compose parity exists so a future
+  compose run cannot silently lose the Groq/audio configuration.
+
 ## Networking
 
 - The app listens on port 8000 (override with the `PORT` env var).

@@ -5,6 +5,12 @@ services:
       - "${PORT:-8000}:${PORT:-8000}"
     environment:
       PORT: "${PORT:-8000}"
+      GROQ_API_KEY: "${GROQ_API_KEY:-}"
+      GROQ_MODEL: "${GROQ_MODEL:-}"
+      WHISPER_MODEL: "${WHISPER_MODEL:-}"
+      TRANSCRIPT_LOGPROB_FLOOR: "${TRANSCRIPT_LOGPROB_FLOOR:-}"
+      TRANSCRIPT_NO_SPEECH_CEIL: "${TRANSCRIPT_NO_SPEECH_CEIL:-}"
+      TRANSCRIPT_COMPRESSION_RANGE: "${TRANSCRIPT_COMPRESSION_RANGE:-}"
     volumes:
       - civic_db:/data
     restart: unless-stopped
