@@ -62,7 +62,7 @@ The bot uses outbound long-polling only — no inbound ports. A guided conversat
 | Method | Path | Purpose |
 |---|---|---|
 | `POST` | `/api/reports` | File a report |
-| `GET` | `/api/reports` | List reports (filters: `?category=`, `?active=`, `?needs_review=`) |
+| `GET` | `/api/reports` | List reports (filters: `?category=`, `?status=`, `?needs_review=`, `?source=`) |
 | `GET` | `/api/reports/{id}` | Report detail |
 | `PATCH` | `/api/reports/{id}/status` | Update report status |
 | `GET` | `/api/stats` | Dashboard aggregates |
