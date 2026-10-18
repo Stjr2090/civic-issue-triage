@@ -4,6 +4,16 @@ Civic issue reporting for the NYLP AI Hackathon 2026. Citizens report problems t
 
 FastAPI + SQLite. Python 3.14. No database server required.
 
+## Problem
+
+Physical service-delivery defects (potholes, burst pipes, overflowing waste, broken streetlights, damaged public facilities) persist in cities long after citizens first report them. Feasibility research in Uganda and an independent market study of Karachi, Pakistan, bracket the same failure from opposite ends.
+
+In Uganda, the reporting pipeline barely exists: citizens lack a low-friction, persistent channel to reach the body responsible for fixing a defect; the channels that do exist are one-off and unaccountable (a call to a councillor, a radio phone-in, a WhatsApp group that dies within a week); and no verified public baseline exists for how long civic incidents take to resolve. In Karachi, complaint infrastructure exists at scale: the Pakistan Citizen's Portal has processed over six million complaints, nearly one million of them in municipal services, yet reported satisfaction in that category is 47%. But responsibility for one visible problem is split across multiple authorities depending on service and exact location, duplicate reports of the same defect arrive as unrelated tickets, and a complaint marked resolved is not independently verified as fixed.
+
+The two pictures converge on one gap: the problem is not only whether a citizen can report, but whether each report is classified consistently, routed to the authority that actually owns the defect, linked to duplicates so recurring problems become visible, and closed only when the outcome is confirmed. Reports that fail any of these steps die quietly. The cost, in both markets, is avoidable accidents and health hazards, wasted public spending, and citizens who stop reporting because nothing shows that reporting changes anything.
+
+This prototype demonstrates the front of that pipeline: classification with a keyword fallback and a safety floor, routing suggestions with human review on uncertain cases, and status tracking on an auditable dashboard. Duplicate detection and citizen-confirmed resolution remain on the roadmap.
+
 ## How it works
 
 1. **Intake** — web form at `/`, or the Telegram bot with a category keyboard.
