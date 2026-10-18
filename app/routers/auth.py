@@ -35,6 +35,18 @@ def admin_configured() -> bool:
     )
 
 
+def cookie_secure() -> bool:
+    """Secure flag for the session cookie, env-gated (COOKIE_SECURE=1).
+
+    The public face is HTTPS via the front proxy, so the box deploy sets
+    COOKIE_SECURE=1. Default off keeps local http://localhost admin testing
+    working (browsers silently drop Secure cookies over plain http).
+    """
+    return os.environ.get("COOKIE_SECURE", "").strip().lower() in (
+        "1", "true", "yes"
+    )
+
+
 def require_admin(request: Request) -> None:
     """FastAPI dependency: 401 unless a live admin session cookie is present
     AND admin credentials are configured (fail-closed on unset creds)."""
@@ -82,6 +94,7 @@ def login(payload: LoginIn, response: Response):
         token,
         httponly=True,
         samesite="lax",
+        secure=cookie_secure(),
         max_age=SESSION_TTL_SECONDS,
     )
     return {"ok": True}

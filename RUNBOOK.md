@@ -58,7 +58,9 @@ ls /etc/nginx /etc/caddy 2>/dev/null   # reverse proxy present?
   `/api/reports/{id}/status`, GET `/api/route/{id}`, GET
   `/api/reports/{id}/detail`) returns 401. Intake and all other reads stay
   public. Sessions are in-memory per process and expire after 8 hours; a
-  restart logs admins out.
+  restart logs admins out. Set `COOKIE_SECURE=1` on the public HTTPS deploy
+  so the session cookie carries the Secure flag; leave it unset for plain-
+  http localhost admin testing (browsers drop Secure cookies over http).
 - The live dev path today is bare uvicorn with the environment from the
   shell; compose is the container path. Compose parity exists so a future
   compose run cannot silently lose the Groq/audio configuration.

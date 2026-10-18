@@ -59,13 +59,19 @@ def _seed_report(category: str = "roads") -> int:
 def _clean_auth_env():
     """Each test starts fail-closed: creds unset, no sessions."""
     saved = {
-        k: os.environ.pop(k, None) for k in ("ADMIN_USERNAME", "ADMIN_PASSWORD")
+        k: os.environ.pop(k, None)
+        for k in ("ADMIN_USERNAME", "ADMIN_PASSWORD", "COOKIE_SECURE")
     }
     auth_mod._sessions.clear()
     client.cookies.clear()
     yield
     auth_mod._sessions.clear()
     client.cookies.clear()
+    # Pop-then-restore: a test body may have set vars that were absent at
+    # setup (e.g. COOKIE_SECURE=1); leaving them would leak Secure cookies
+    # into later suites over http (unsent cookie -> 401). We saw exactly that.
+    for k in saved:
+        os.environ.pop(k, None)
     for k, v in saved.items():
         if v is not None:
             os.environ[k] = v
@@ -187,3 +193,37 @@ def test_garbage_cookie_401():
     os.environ["ADMIN_PASSWORD"] = "s3cret-demo-pw"
     r = client.patch(f"/api/reports/{rid}/status?status=closed")
     assert r.status_code == 401
+
+
+# --- cookie flags (review ask 15:44Z: Secure + SameSite for HTTPS face) ------
+
+
+def test_cookie_flags_default_no_secure_flag():
+    """Default (local http testing): no Secure flag; SameSite/httponly set."""
+    os.environ["ADMIN_USERNAME"] = "admin"
+    os.environ["ADMIN_PASSWORD"] = "s3cret-demo-pw"
+    r = client.post(
+        "/api/admin/login",
+        json={"username": "admin", "password": "s3cret-demo-pw"},
+    )
+    assert r.status_code == 200
+    set_cookie = r.headers["set-cookie"].lower()
+    assert "samesite=lax" in set_cookie
+    assert "httponly" in set_cookie
+    assert "secure" not in set_cookie
+
+
+def test_cookie_flags_cookie_secure_sets_secure():
+    """Box/HTTPS deploy sets COOKIE_SECURE=1 -> Secure flag present."""
+    os.environ["ADMIN_USERNAME"] = "admin"
+    os.environ["ADMIN_PASSWORD"] = "s3cret-demo-pw"
+    os.environ["COOKIE_SECURE"] = "1"
+    r = client.post(
+        "/api/admin/login",
+        json={"username": "admin", "password": "s3cret-demo-pw"},
+    )
+    assert r.status_code == 200
+    set_cookie = r.headers["set-cookie"].lower()
+    assert "secure" in set_cookie
+    assert "samesite=lax" in set_cookie
+    assert "httponly" in set_cookie
