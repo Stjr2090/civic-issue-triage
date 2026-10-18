@@ -68,7 +68,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_authorities_name_cat
     ON authorities(name, category);
 """
 
+def apply_migrations(conn):
+    """Apply every *.sql file in db/migrations/ in lexical order.
+
+    Additive and idempotent by convention (IF NOT EXISTS); no ledger/version
+    tracking. Safe to run on every startup and on a live volume.
+    """
+    migrations_dir = Path(__file__).resolve().parent.parent / "db" / "migrations"
+    if migrations_dir.exists():
+        for migration in sorted(migrations_dir.glob("*.sql")):
+            conn.executescript(migration.read_text())
+        conn.commit()
+
+
 conn = sqlite3.connect(DB_PATH)
 conn.executescript(SCHEMA)
+apply_migrations(conn)
 conn.commit()
 conn.close()

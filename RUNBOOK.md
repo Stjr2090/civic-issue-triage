@@ -52,10 +52,9 @@ ls /etc/nginx /etc/caddy 2>/dev/null   # reverse proxy present?
 
 - The SQLite database lives on the named volume `civic_db` mounted at `/data`
   (`DATABASE_PATH=/data/civic.db`).
-- **Fresh-DB assumption:** the volume persists across redeploys, so data is
-  kept — but there is no migration mechanism yet. A schema change therefore
-  needs a fresh volume (`docker compose down -v` before `up`) until a migration
-  ticket exists.
+- **Migrations:** additive, idempotent migrations live in `db/migrations/*.sql`
+  and are applied by the loader in `app/db.py` at startup. Additive table
+  migrations are safe on the live volume — no `docker compose down -v` needed.
 
 ## Operations
 
