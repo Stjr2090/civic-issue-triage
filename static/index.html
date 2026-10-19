@@ -1,95 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reporta - Report an Issue</title>
+<meta name="theme-color" content="#0b1120">
+<meta name="description" content="Report potholes, water outages, waste and public service problems. Every report is classified for urgency and routed to the right authority.">
+<title>Civic Issue Triage — Report an Issue</title>
+<link rel="icon" href="/static/reporta-logo-cropped.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/theme.css">
+<script src="/static/theme.js"></script>
 <style>
-  :root {
-    --bg: #0f172a; --card: #1e293b; --border: #334155;
-    --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8; --ok: #4ade80; --err: #f87171;
+  .shell { max-width: 680px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0 26px; }
+  .brand img { height: 40px; width: auto; display: block; }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+
+  .hero { margin-bottom: 22px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; font-size: .75rem; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 14px;
   }
-  * { box-sizing: border-box; margin: 0; }
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    background: var(--bg); color: var(--text);
-    min-height: 100vh;
-    padding: 24px 16px;
-  }
+  .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); font-size: 1rem; margin-top: 10px; max-width: 52ch; }
+
+  .steps { display: flex; gap: 8px; margin: 18px 0 0; flex-wrap: wrap; }
+  .step { font-size: .78rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .step b { width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; font-size: .7rem; color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+  .step + .step::before { content: ""; width: 18px; height: 1px; background: var(--border-strong); margin-right: 2px; }
+
   .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 28px; width: 100%; max-width: 480px; margin: 0 auto;
+    background: linear-gradient(180deg, var(--card-2), var(--card));
+    border: 1px solid var(--border); border-radius: 18px; padding: 26px; box-shadow: var(--shadow);
   }
-  .logo-header { display: flex; align-items: center; justify-content: center; margin: 0 0 22px; }
-  .logo-header img { height: 64px; width: auto; display: block; }
-  h1 { font-size: 1.3rem; margin-bottom: 4px; }
-  .sub { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
-  label { display: block; font-size: .85rem; color: var(--muted); margin: 14px 0 6px; }
-  input, textarea, select {
-    width: 100%; padding: 10px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--bg); color: var(--text);
-    font-size: 1rem;
+  .field { margin-bottom: 18px; }
+  label, .label { display: flex; justify-content: space-between; align-items: baseline; font-size: .85rem; font-weight: 600; margin-bottom: 7px; }
+  .opt { color: var(--muted); font-weight: 500; font-size: .75rem; }
+  .req { color: var(--err); margin-left: 3px; }
+  input[type=text], input:not([type]), textarea { width: 100%; padding: 12px 14px; font-size: 1rem; }
+  textarea { min-height: 110px; resize: vertical; }
+  .hint { font-size: .75rem; color: var(--muted); margin-top: 5px; display: flex; justify-content: space-between; gap: 10px; }
+  .field-error { color: var(--err); font-size: .78rem; margin-top: 5px; display: none; }
+  .field.invalid .field-error { display: block; }
+  .field.invalid input, .field.invalid textarea { border-color: var(--err); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border: 0; padding: 0; min-width: 0; margin-bottom: 18px; }
+  .cats legend { font-size: .85rem; font-weight: 600; margin-bottom: 7px; padding: 0; }
+  label.cat { position: relative; display: block; margin: 0; }
+  .cat input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; }
+  .cat span {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+    padding: 14px 6px; border-radius: 12px; border: 1px solid var(--border-strong);
+    background: var(--bg-2); font-size: .8rem; font-weight: 600; color: var(--muted); transition: all .15s;
   }
-  textarea { min-height: 90px; resize: vertical; }
-  button {
-    margin-top: 20px; width: 100%; padding: 12px; border: 0; border-radius: 8px;
-    background: var(--accent); color: #0f172a; font-weight: 700; font-size: 1rem;
-    cursor: pointer;
+  .cat svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .cat:hover span { border-color: var(--muted); color: var(--text); }
+  .cat input:checked + span { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg-2)); box-shadow: inset 0 0 0 1px var(--accent); }
+  .cat input:focus-visible + span { box-shadow: var(--ring); }
+
+  .submit { width: 100%; padding: 14px; font-size: 1rem; border-radius: 12px; font-weight: 800; }
+  .spin { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.35); border-top-color: currentColor; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  .submit:disabled .spin { display: inline-block; }
+  .submit:disabled { cursor: wait; opacity: .8; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .msg { margin-top: 16px; padding: 12px 14px; border-radius: 10px; font-size: .92rem; display: none; border: 1px solid transparent; }
+  .msg.ok { display: block; background: color-mix(in srgb, var(--ok) 12%, transparent); color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); }
+  .msg.err { display: block; background: color-mix(in srgb, var(--err) 12%, transparent); color: var(--err); border-color: color-mix(in srgb, var(--err) 35%, transparent); }
+
+  /* confirmation screen */
+  .success { text-align: center; padding: 10px 4px 2px; }
+  .success .tick { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--ok) 15%, transparent); border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent); }
+  .success .tick svg { width: 30px; height: 30px; stroke: var(--ok); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .success h2 { font-size: 1.35rem; letter-spacing: -.01em; }
+  .success .ref { display: inline-flex; align-items: center; gap: 10px; margin: 14px 0 6px; padding: 8px 8px 8px 16px; border-radius: 12px; border: 1px dashed var(--border-strong); background: var(--bg-2); font-weight: 800; font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+  .success .ref .btn { padding: 6px 12px; font-size: .78rem; }
+  #success-text { color: var(--text-soft); font-size: .95rem; max-width: 44ch; margin: 8px auto 0; }
+  .next { text-align: left; margin: 22px 0 22px; padding: 16px 18px; border-radius: 12px; background: var(--tint); border: 1px solid var(--border); display: grid; gap: 10px; }
+  .next div { display: flex; gap: 12px; font-size: .88rem; color: var(--text-soft); }
+  .next b { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: .72rem; color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+
+  .trust { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 22px; color: var(--muted); font-size: .8rem; }
+  .trust span { display: inline-flex; align-items: center; gap: 6px; }
+  .trust svg { width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  @media (max-width: 520px) {
+    .card { padding: 20px 16px; }
+    .cats { grid-template-columns: repeat(2, 1fr); }
+    .row { grid-template-columns: 1fr; gap: 0; }
+    .step + .step::before { display: none; }
+    .steps { gap: 6px 14px; }
   }
-  button:disabled { opacity: .6; cursor: wait; }
-  .msg { margin-top: 14px; padding: 10px; border-radius: 8px; font-size: .9rem; display: none; }
-  .msg.ok { display: block; background: rgba(74,222,128,.12); color: var(--ok); }
-  .msg.err { display: block; background: rgba(248,113,113,.12); color: var(--err); }
-  .nav { margin-top: 18px; text-align: center; }
-  .nav a { color: var(--accent); font-size: .85rem; text-decoration: none; }
-  .charcount { font-size: .75rem; color: var(--muted); text-align: right; margin-top: 4px; }
 </style>
 </head>
 <body>
-<header class="logo-header">
-  <img src="/static/reporta-logo-cropped.svg" alt="Reporta logo"
-       onerror="this.remove()">
-</header>
-<main class="card">
-  <h1>Report an Issue</h1>
-  <p class="sub">Potholes, water outages, waste, public services. Submit it and it gets routed.</p>
-  <form id="report-form">
-    <label for="title">Title</label>
-    <input id="title" name="title" required minlength="3" maxlength="200"
-           placeholder="Pothole on Main Rd">
+<div class="shell">
+  <header class="topbar logo-header">
+    <a class="brand" href="/" aria-label="Reporta home">
+      <img src="/static/reporta-logo-cropped.svg" alt="Reporta logo" onerror="this.remove()">
+    </a>
+    <div class="top-actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+        <svg class="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a class="pill-link" href="/dashboard">Dashboard</a>
+    </div>
+  </header>
 
-    <label for="description">Description</label>
-    <textarea id="description" name="description" required minlength="10" maxlength="4000"
-              placeholder="What's wrong, where exactly, and how bad is it? (min 10 chars)"></textarea>
-    <div class="charcount"><span id="count">0</span>/4000</div>
+  <section class="hero">
+    <span class="eyebrow"><i></i> Civic Issue Triage</span>
+    <h1>Spot a problem? <span>Report it in under a minute.</span></h1>
+    <p class="sub">Potholes, water outages, waste, public services — submit it and it gets routed.</p>
+    <div class="steps" aria-label="How it works">
+      <span class="step"><b>1</b> Submit</span>
+      <span class="step"><b>2</b> Urgency scored</span>
+      <span class="step"><b>3</b> Routed to authority</span>
+    </div>
+  </section>
 
-    <label for="category">Category</label>
-    <select id="category" name="category" required>
-      <option value="roads">Roads</option>
-      <option value="water">Water</option>
-      <option value="waste">Waste</option>
-      <option value="public_services">Public services</option>
-    </select>
+  <main class="card">
+    <form id="report-form" novalidate>
+      <h2 class="sr-only">Report a Civic Issue</h2>
+      <div class="field" id="fld-title">
+        <label for="title">Title <span class="req" aria-hidden="true">*</span></label>
+        <input id="title" name="title" required minlength="3" maxlength="200"
+               placeholder="Pothole on Main Rd" aria-describedby="err-title">
+        <div class="field-error" id="err-title">Please enter a short title (at least 3 characters).</div>
+      </div>
 
-    <label for="reporter">Your name (optional)</label>
-    <input id="reporter" name="reporter" maxlength="120" placeholder="Anonymous">
+      <div class="field" id="fld-description">
+        <label for="description">Description <span class="req" aria-hidden="true">*</span></label>
+        <textarea id="description" name="description" required minlength="10" maxlength="4000"
+                  placeholder="What's wrong, where exactly, and how bad is it? (min 10 chars)" aria-describedby="err-description"></textarea>
+        <div class="hint"><span>Mention danger to people, such as flooding or open wires.</span><span><span id="count">0</span>/4000</span></div>
+        <div class="field-error" id="err-description">Please describe the problem in at least 10 characters.</div>
+      </div>
 
-    <label for="location">Location (optional)</label>
-    <input id="location" name="location" maxlength="200" placeholder="Area, street, landmark">
+      <fieldset class="cats">
+        <legend>Category</legend>
+        <label class="cat"><input type="radio" name="category" value="roads" checked>
+          <span><svg viewBox="0 0 24 24"><path d="M5 21 9 3M19 21 15 3M12 4v3M12 11v3M12 18v3"/></svg>Roads</span></label>
+        <label class="cat"><input type="radio" name="category" value="water">
+          <span><svg viewBox="0 0 24 24"><path d="M12 3s6 6.2 6 10.5A6 6 0 0 1 6 13.5C6 9.2 12 3 12 3Z"/></svg>Water</span></label>
+        <label class="cat"><input type="radio" name="category" value="waste">
+          <span><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Waste</span></label>
+        <label class="cat"><input type="radio" name="category" value="public_services">
+          <span><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>Public services</span></label>
+      </fieldset>
 
-    <button type="submit" id="submit-btn">Submit report</button>
-    <div class="msg" id="msg" role="alert"></div>
-  </form>
-  <nav class="nav"><a href="/dashboard">View the dashboard &rarr;</a></nav>
-</main>
+      <div class="row">
+        <div class="field">
+          <label for="reporter">Your name <span class="opt">Optional</span></label>
+          <input id="reporter" name="reporter" maxlength="120" placeholder="Anonymous" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="location">Location <span class="opt">Optional</span></label>
+          <input id="location" name="location" maxlength="200" placeholder="Area, street, landmark">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary submit" id="submit-btn"><span class="spin" aria-hidden="true"></span><span id="submit-label">Submit report</span></button>
+      <div class="msg" id="msg" role="alert"></div>
+    </form>
+
+    <section class="success is-hidden" id="success" aria-live="polite">
+      <div class="tick"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+      <h2>Report received</h2>
+      <div class="ref"><span id="ref-id">#—</span><button class="btn" id="copy-ref" type="button">Copy</button></div>
+      <p id="success-text"></p>
+      <div class="next">
+        <div><b>1</b><span>Your report is checked for urgency. Safety hazards are always ranked high.</span></div>
+        <div><b>2</b><span>It is routed to the authority responsible for this kind of issue.</span></div>
+        <div><b>3</b><span>Uncertain cases are reviewed by a person before anything is sent.</span></div>
+      </div>
+      <button class="btn btn-primary submit" id="another" type="button">Submit another report</button>
+    </section>
+  </main>
+
+  <div class="trust">
+    <span><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>Safety issues are never down-ranked</span>
+    <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>No account needed</span>
+  </div>
+
+  <footer class="site-footer">
+    <span>Reporta · Civic Issue Triage</span>
+    <a href="/dashboard">Admin dashboard</a>
+  </footer>
+</div>
 
 <script>
 (function () {
   var form = document.getElementById("report-form");
   var btn = document.getElementById("submit-btn");
+  var label = document.getElementById("submit-label");
   var msg = document.getElementById("msg");
+  var titleEl = document.getElementById("title");
   var desc = document.getElementById("description");
   var count = document.getElementById("count");
+  var success = document.getElementById("success");
+  var lastRef = "";
 
   desc.addEventListener("input", function () { count.textContent = desc.value.length; });
 
@@ -98,15 +214,61 @@
     msg.textContent = text;
   }
 
+  function setInvalid(fieldId, bad) {
+    document.getElementById(fieldId).classList.toggle("invalid", bad);
+  }
+
+  titleEl.addEventListener("input", function () { setInvalid("fld-title", titleEl.value.trim().length < 3 && titleEl.value.length > 0); });
+  desc.addEventListener("input", function () { setInvalid("fld-description", desc.value.trim().length < 10 && desc.value.length > 0); });
+
+  function validate() {
+    var badTitle = titleEl.value.trim().length < 3;
+    var badDesc = desc.value.trim().length < 10;
+    setInvalid("fld-title", badTitle);
+    setInvalid("fld-description", badDesc);
+    if (badTitle) { titleEl.focus(); return false; }
+    if (badDesc) { desc.focus(); return false; }
+    return true;
+  }
+
+  function showSuccess(id) {
+    lastRef = "#" + id;
+    document.getElementById("ref-id").textContent = lastRef;
+    document.getElementById("success-text").textContent =
+      "Thank you, your report has been received and filed as #" + id + ".";
+    form.classList.add("is-hidden");
+    success.classList.remove("is-hidden");
+    document.getElementById("another").focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.getElementById("another").addEventListener("click", function () {
+    success.classList.add("is-hidden");
+    form.classList.remove("is-hidden");
+    show("", "");
+    titleEl.focus();
+  });
+
+  document.getElementById("copy-ref").addEventListener("click", function () {
+    var done = function () { window.reportaToast("Reference " + lastRef + " copied", "ok"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lastRef).then(done, function () { window.reportaToast("Could not copy", "err"); });
+    } else {
+      window.reportaToast("Reference: " + lastRef);
+    }
+  });
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    btn.disabled = true;
     show("", "");
+    if (!validate()) return;
+    btn.disabled = true;
+    label.textContent = "Submitting…";
 
     var payload = {
-      title: document.getElementById("title").value.trim(),
+      title: titleEl.value.trim(),
       description: desc.value.trim(),
-      category: document.getElementById("category").value,
+      category: form.elements["category"].value,
       reporter: document.getElementById("reporter").value.trim() || null,
       location: document.getElementById("location").value.trim() || null,
       source: "web"
@@ -122,15 +284,16 @@
     })
     .then(function (r) {
       if (r.ok) {
-        show("ok", "Thank you, your report has been received and filed as #" + r.body.id + ".");
         form.reset();
         count.textContent = "0";
+        showSuccess(r.body.id);
       } else {
-        show("err", r.body.detail || "Submission failed.");
+        var d = r.body.detail;
+        show("err", (typeof d === "string" && d) || "Submission failed. Please check the fields and try again.");
       }
     })
-    .catch(function () { show("err", "Network error, try again."); })
-    .finally(function () { btn.disabled = false; });
+    .catch(function () { show("err", "Network error — try again."); })
+    .finally(function () { btn.disabled = false; label.textContent = "Submit report"; });
   });
 })();
 </script>
