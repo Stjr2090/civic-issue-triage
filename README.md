@@ -50,7 +50,7 @@ Reporta lets citizens report local service-delivery problems through a **web for
 
 The system is designed to **degrade gracefully and fail closed**: intake never blocks on the AI, safety-critical reports are never under-prioritised, and uncertain cases go to a human instead of being auto-routed.
 
-**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard)
+**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard), plus the **Telegram intake bot** live on the same deployment
 
 ---
 
@@ -260,7 +260,7 @@ The bot uses **outbound long-polling only**, so no inbound ports are needed. A g
 pytest
 ```
 
-The suite contains 27 tests. They require no API keys and no network access, so they are safe to run in CI.
+The suite contains 89 tests. They require no API keys and no network access, so they are safe to run in CI.
 
 ---
 
