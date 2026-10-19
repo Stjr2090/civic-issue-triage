@@ -49,7 +49,8 @@ All environment variables are **optional** — the app runs with sensible defaul
 | `DATABASE_PATH` | `./data/civic.db` | SQLite database location |
 | `PORT` | `8000` | Server port (Docker image) |
 | `GROQ_API_KEY` | — | Enables AI classification; without it, keyword fallback is used |
-| `GROQ_MODEL` | provider default | Chat model used for classification; set a chat-capable model available on your account |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` (deployed) | Chat model used for classification; set a chat-capable model available on your account |
+| `WHISPER_MODEL` | — | Voice-note transcription (audio intake); coming soon, not enabled in this deployment |
 | `CLASSIFIER_TIMEOUT` | `5` | Seconds before the AI call gives up and falls back |
 | `CLASSIFIER_SAFETY_FLOOR` | `5` | Minimum urgency for safety-term matches (raise-only) |
 | `CLASSIFICATION_CONFIDENCE_FLOOR` | `0.60` | Confidence below this sends a report to human review |
