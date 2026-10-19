@@ -4,8 +4,12 @@ Protected set (obbo's recommendation, PM-approved 15:31Z):
 - PATCH /api/reports/{id}/status  (mutating)
 - GET  /api/route/{id}            (mutating via GET: status->routed + audit)
 - GET  /api/reports/{id}/detail   (admin visibility affordance)
+- GET  /api/reports              (case rows; Steph's privacy order)
+- GET  /api/reports/{id}         (single case row; auth precedes existence)
+- GET  /api/stats                (aggregate counts; Steph's privacy order)
 
-Public set (unchanged): POST /api/reports (intake), all other reads.
+Public set (unchanged): POST /api/reports (intake), GET /api/authorities
+(routing metadata, zero case data), GET / (index), GET /dashboard (bare shell).
 
 Login lives at POST /api/admin/login and issues a compact HS256 JWS in an
 httponly session cookie. With JWT_SECRET, ADMIN_USERNAME or ADMIN_PASSWORD
@@ -142,16 +146,67 @@ def test_gate_jwt_secret_unset_login_and_protected_401_intake_open():
     assert "reporta_session" not in r.cookies
     rid = _seed_report()
     assert client.get(f"/api/reports/{rid}/detail").status_code == 401
-    assert client.get("/api/reports").status_code == 200
-    assert client.get(f"/api/reports/{rid}").status_code == 200
+    # Case-data reads are gated too; only intake + routing metadata stay open.
+    assert client.get("/api/reports").status_code == 401
+    assert client.get(f"/api/reports/{rid}").status_code == 401
+    assert client.get("/api/stats").status_code == 401
 
 
 def test_gate_intake_and_reads_stay_public():
+    # Reads moved behind the gate; the public surface is intake + routing
+    # metadata + the two static shells.
+    _seed_report()
+    assert client.get("/api/authorities").status_code == 200
+    assert client.get("/").status_code == 200
+    assert client.get("/dashboard").status_code == 200
+
+
+# --- case-data reads gated (guards commit, item 1 of 2) -----------------------
+
+
+def test_gate_signed_out_reports_list_401_no_rows():
+    _seed_report()
+    r = client.get("/api/reports")
+    assert r.status_code == 401
+    # No case rows may leak through the fail-closed 401 body.
+    assert "title" not in r.text
+    assert "Gate probe pothole" not in r.text
+
+
+def test_gate_signed_out_stats_401():
+    assert client.get("/api/stats").status_code == 401
+
+
+def test_gate_signed_out_single_report_401():
+    rid = _seed_report()
+    assert client.get(f"/api/reports/{rid}").status_code == 401
+
+
+def test_gate_signed_out_unknown_report_401_not_404():
+    # Auth precedes existence: a nonexistent id must never be disclosed.
+    assert client.get("/api/reports/999999").status_code == 401
+
+
+def test_gate_public_set_intact():
+    r = client.post("/api/reports", json={
+        "title": "Public intake probe",
+        "description": "Intake must stay open to citizens without a session.",
+        "category": "roads",
+    })
+    assert r.status_code == 201, r.text
+    assert client.get("/api/authorities").status_code == 200
+    assert client.get("/").status_code == 200
+    assert client.get("/dashboard").status_code == 200
+
+
+def test_gate_signed_in_case_data_reads_200():
+    _set_admin()
+    assert _login().status_code == 200
     rid = _seed_report()
     assert client.get("/api/reports").status_code == 200
-    assert client.get(f"/api/reports/{rid}").status_code == 200
     assert client.get("/api/stats").status_code == 200
-    assert client.get("/api/authorities").status_code == 200
+    assert client.get(f"/api/reports/{rid}").status_code == 200
+    assert client.get(f"/api/reports/{rid}/detail").status_code == 200
 
 
 # --- creds set: happy path + JWT semantics -----------------------------------
