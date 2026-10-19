@@ -121,7 +121,7 @@
     })
     .then(function (r) {
       if (r.ok) {
-        show("ok", "Report #" + r.body.id + " submitted — status: " + r.body.status + ".");
+        show("ok", "Thank you, your report has been received and filed as #" + r.body.id + ".");
         form.reset();
         count.textContent = "0";
       } else {
