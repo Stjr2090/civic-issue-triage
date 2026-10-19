@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Civic Issue Triage — Report an Issue</title>
+<title>Reporta - Report an Issue</title>
 <style>
   :root {
     --bg: #0f172a; --card: #1e293b; --border: #334155;
@@ -51,8 +51,8 @@
        onerror="this.remove()">
 </header>
 <main class="card">
-  <h1>Report a Civic Issue</h1>
-  <p class="sub">Potholes, water outages, waste, public services — submit it and it gets routed.</p>
+  <h1>Report an Issue</h1>
+  <p class="sub">Potholes, water outages, waste, public services. Submit it and it gets routed.</p>
   <form id="report-form">
     <label for="title">Title</label>
     <input id="title" name="title" required minlength="3" maxlength="200"
@@ -129,7 +129,7 @@
         show("err", r.body.detail || "Submission failed.");
       }
     })
-    .catch(function () { show("err", "Network error — try again."); })
+    .catch(function () { show("err", "Network error, try again."); })
     .finally(function () { btn.disabled = false; });
   });
 })();
