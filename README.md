@@ -266,14 +266,13 @@ The suite contains 27 tests. They require no API keys and no network access, so 
 
 ## Screenshots
 
-<!-- Stephen: drop the four frames into docs/screenshots/ and uncomment each line below. -->
+![Intake form](docs/reporta-1.PNG)
 
-<!-- ![Intake form](docs/reporta-1.png) -->
-<!-- ![Submission confirmation](docs/reporta-3.png) -->
-<!-- ![Authenticated dashboard](docs/reporta-2.png) -->
-<!-- ![Case detail](docs/screenshots/reporta-4.png) -->
+![Admin dashboard](docs/reporta-2.PNG)
 
-*Frames pending: intake form, submission confirmation, authenticated dashboard, case detail.*
+![Telegram bot intake](docs/reporta-3.PNG)
+
+![Case detail](docs/reporta-4.PNG)
 
 ---
 
