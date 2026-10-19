@@ -397,3 +397,19 @@ def test_detail_history_tracks_status_change():
     ]
     assert changes
     assert changes[-1]["detail"] == "in_progress"
+
+
+def test_confirmation_messages_carry_filed_id():
+    root = db.Path(__file__).resolve().parent.parent
+    web = (root / "static" / "index.html").read_text(encoding="utf-8")
+    bot = (root / "app" / "telegram_bot.py").read_text(encoding="utf-8")
+    assert "received and filed as #" in web
+    assert "received and filed as #{rid}" in bot
+
+    r = client.post("/api/reports", json={
+        "title": "Confirmation contract probe",
+        "description": "The intake response must still expose the filed id.",
+        "category": "roads",
+    })
+    assert r.status_code == 201, r.text
+    assert "id" in r.json()

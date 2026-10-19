@@ -108,7 +108,7 @@ def _file_report(token, client, chat_id, text, category, reporter):
             rid = r.json().get("id")
             _send(
                 token, client, chat_id,
-                f"Thanks - report #{rid} is queued for routing.",
+                f"Thank you, your report has been received and filed as #{rid}.",
             )
         else:
             _send(
