@@ -46,6 +46,8 @@
   .u1 { color: var(--u1); } .u2 { color: var(--u2); } .u3 { color: var(--u3); }
   .u4 { color: var(--u4); } .u5 { color: var(--u5); }
   .empty { color: var(--muted); text-align: center; padding: 24px; font-size: .9rem; }
+  .is-hidden { display: none !important; }
+  .auth-prompt { border: 1px solid var(--u1); border-radius: 10px; padding: 6px; }
   .rowbtn { padding: 4px 10px; font-size: .75rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--accent); cursor: pointer; }
   .rowbtn:hover { background: rgba(56,189,248,.1); }
   td.desc { color: var(--muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -118,7 +120,7 @@
     <button id="reload">Refresh</button>
   </section>
 
-  <table>
+  <table id="report-list">
     <thead>
       <tr>
         <th>ID</th><th>Title</th><th class="desc-col">Description</th><th>Category</th>
@@ -127,6 +129,7 @@
     </thead>
     <tbody id="rows"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
   </table>
+  <p id="auth-hint" class="is-hidden" style="color:var(--muted);font-size:.9rem;margin-top:12px;">Admin sign-in required — public report form stays at /</p>
 </div>
 
 <div class="detail-backdrop" id="detail-backdrop" hidden>
@@ -147,8 +150,25 @@
     });
   }
 
+  function handle401() {
+    el("stats").classList.add("is-hidden");
+    el("report-list").classList.add("is-hidden");
+    el("auth-hint").classList.remove("is-hidden");
+    el("auth-box").classList.add("auth-prompt");
+    var state = el("auth-state");
+    state.textContent = "session expired — sign in";
+    state.style.color = "var(--u1)";
+    closeDetail();
+    el("auth-user").focus();
+  }
+
   function loadStats() {
-    fetch("/api/stats").then(function (r) { return r.json(); }).then(function (s) {
+    fetch("/api/stats").then(function (r) {
+      if (r.status === 401) { handle401(); return null; }
+      if (!r.ok) return null;
+      return r.json();
+    }).then(function (s) {
+      if (!s) return;
       var items = [
         { n: s.total, l: "Total reports" },
         { n: s.by_status.new || 0, l: "New" },
@@ -171,7 +191,12 @@
     if (src) p.set("source", src);
     if (rev !== "") p.set("needs_review", rev);
 
-    fetch("/api/reports?" + p.toString()).then(function (r) { return r.json(); }).then(function (rows) {
+    fetch("/api/reports?" + p.toString()).then(function (r) {
+      if (r.status === 401) { handle401(); return null; }
+      if (!r.ok) return null;
+      return r.json();
+    }).then(function (rows) {
+      if (!rows) return;
       if (!rows.length) {
         el("rows").innerHTML = '<tr><td colspan="8" class="empty">No reports match these filters.</td></tr>';
         return;
@@ -208,9 +233,12 @@
     detailBody.innerHTML = '<p class="state">Loading…</p>';
     backdrop.hidden = false;
     fetch("/api/reports/" + id + "/detail").then(function (r) {
+      if (r.status === 401) { handle401(); return null; }
       if (!r.ok) throw new Error("detail " + r.status);
       return r.json();
-    }).then(renderDetail).catch(function () {
+    }).then(function (d) {
+      if (d) renderDetail(d);
+    }).catch(function () {
       detailBody.innerHTML = '<p class="state">Could not load this report.</p>';
       backdrop.hidden = false;
     });
@@ -285,8 +313,15 @@
       rbtn.addEventListener("click", function () {
         rbtn.disabled = true;
         fetch("/api/route/" + rbtn.dataset.id, { method: "GET" })
-          .then(function (r) { return r.json(); })
-          .then(function () { loadRows(); loadStats(); openDetail(rep.id); });
+          .then(function (r) {
+            if (r.status === 401) { handle401(); return null; }
+            if (!r.ok) return null;
+            return r.json();
+          })
+          .then(function (b) {
+            if (!b) return;
+            loadRows(); loadStats(); openDetail(rep.id);
+          });
       });
     }
   }
@@ -303,8 +338,15 @@
       e.stopPropagation();
       btn.disabled = true;
       fetch("/api/route/" + btn.dataset.id, { method: "GET" })
-        .then(function (r) { return r.json(); })
-        .then(function (b) { loadRows(); loadStats(); });
+        .then(function (r) {
+          if (r.status === 401) { handle401(); return null; }
+          if (!r.ok) return null;
+          return r.json();
+        })
+        .then(function (b) {
+          if (!b) return;
+          loadRows(); loadStats();
+        });
       return;
     }
     var tr = e.target.closest("tr[data-id]");
@@ -329,10 +371,7 @@
       }),
     }).then(function (r) {
       if (r.ok) {
-        el("auth-state").textContent = "signed in";
-        el("auth-state").style.color = "var(--u1)";
-        el("auth-pass").value = "";
-        loadRows(); loadStats();
+        location.reload();
       } else if (r.status === 503) {
         el("auth-state").textContent = "admin auth not configured";
         el("auth-state").style.color = "var(--err)";
@@ -351,7 +390,6 @@
 
   loadStats();
   loadRows();
-  setInterval(function () { loadRows(); loadStats(); }, 30000);
 })();
 </script>
 </body>

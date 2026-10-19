@@ -382,3 +382,42 @@ def test_cookie_flags_cookie_secure_sets_secure():
     assert "secure" in set_cookie
     assert "samesite=lax" in set_cookie
     assert "httponly" in set_cookie
+
+
+# --- dashboard 401 UX flow (static contract; repo has no browser harness) -----
+
+DASHBOARD_HTML = (
+    db.Path(__file__).resolve().parent.parent / "static" / "dashboard.html"
+).read_text(encoding="utf-8")
+
+
+def test_dashboard_signed_out_shell_has_auth_prompt_markup():
+    r = client.get("/dashboard")
+    assert r.status_code == 200
+    body = r.text
+    for marker in (
+        'id="auth-box"',
+        'id="auth-user"',
+        'id="auth-pass"',
+        'id="auth-btn"',
+        'id="auth-state"',
+        'id="auth-hint"',
+    ):
+        assert marker in body
+
+
+def test_dashboard_401_flow_contract_static():
+    src = DASHBOARD_HTML
+    assert "function handle401" in src
+    assert "session expired — sign in" in src
+    assert "Admin sign-in required — public report form stays at /" in src
+    # Each gated fetch (stats, list, detail, both route paths) branches on 401.
+    assert src.count("r.status === 401") >= 5
+    # 401 hides the data panels and surfaces the sign-in box.
+    assert 'el("stats").classList.add("is-hidden")' in src
+    assert 'el("report-list").classList.add("is-hidden")' in src
+    assert 'el("auth-box").classList.add("auth-prompt")' in src
+    # Successful login is a plain page reload (flow cut 05:23).
+    assert "location.reload();" in src
+    # No polling timers: a signed-out dashboard must not refetch on a loop.
+    assert "setInterval" not in src
