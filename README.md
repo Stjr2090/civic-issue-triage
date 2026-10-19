@@ -268,10 +268,10 @@ The suite contains 27 tests. They require no API keys and no network access, so 
 
 <!-- Stephen: drop the four frames into docs/screenshots/ and uncomment each line below. -->
 
-<!-- ![Intake form](docs/screenshots/intake-form.png) -->
-<!-- ![Submission confirmation](docs/screenshots/confirmation.png) -->
-<!-- ![Authenticated dashboard](docs/screenshots/dashboard-authed.png) -->
-<!-- ![Case detail](docs/screenshots/case-detail.png) -->
+<!-- ![Intake form](docs/reporta-1.png) -->
+<!-- ![Submission confirmation](docs/reporta-3.png) -->
+<!-- ![Authenticated dashboard](docs/reporta-2.png) -->
+<!-- ![Case detail](docs/screenshots/reporta-4.png) -->
 
 *Frames pending: intake form, submission confirmation, authenticated dashboard, case detail.*
 
