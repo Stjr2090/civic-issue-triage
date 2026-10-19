@@ -157,9 +157,6 @@ A report is flagged for human review instead of being auto-routed when any of th
 
 Every classification and routing decision is appended to an audit log so outcomes can be reviewed after the fact.
 
-### Limits we state openly
-
-Confidence is model-reported, not calibrated. The review threshold is a heuristic, not a measured operating point. Keyword matching is blunt and can over-flag, which is the safe direction.
 
 ---
 
