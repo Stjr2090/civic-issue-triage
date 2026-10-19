@@ -269,11 +269,14 @@ The suite contains 27 tests. They require no API keys and no network access, so 
 
 ## Screenshots
 
-<!-- Screenshots are being added by Stephen. Replace the placeholders below with image links. -->
+<!-- Stephen: drop the four frames into docs/screenshots/ and uncomment each line below. -->
 
-| Intake form | Priority dashboard |
-|---|---|
-| *Coming soon* | *Coming soon* |
+<!-- ![Intake form](docs/screenshots/intake-form.png) -->
+<!-- ![Submission confirmation](docs/screenshots/confirmation.png) -->
+<!-- ![Authenticated dashboard](docs/screenshots/dashboard-authed.png) -->
+<!-- ![Case detail](docs/screenshots/case-detail.png) -->
+
+*Frames pending: intake form, submission confirmation, authenticated dashboard, case detail.*
 
 ---
 
@@ -292,7 +295,7 @@ The suite contains 27 tests. They require no API keys and no network access, so 
 
 This is a hackathon prototype. We would rather state its edges than hide them.
 
-- **Demo-grade auth.** Intake is public by design; dashboard mutation endpoints are unauthenticated. Add authentication before any real deployment.
+- **Intake is public; the dashboard is admin-only.** Intake stays public by design. Dashboard views and mutation endpoints sit behind login, with JWT sessions that expire after 12 hours.
 - **Single-node SQLite.** One file. Schema changes run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
 - **Confidence is model-reported, not calibrated.** The review threshold is a sensible heuristic, not a measured operating point.
 - **Keyword fallback is blunt.** Substring matching can over-flag (the safe direction), and the safety terms are not an exhaustive multilingual list.
@@ -304,7 +307,7 @@ This is a hackathon prototype. We would rather state its edges than hide them.
 
 ## Roadmap
 
-- [ ] Authentication for dashboard operators
+- [x] Authentication for dashboard operators
 - [ ] PostgreSQL and schema migrations
 - [ ] Notification dispatch (SMS/email) on routing
 - [ ] Calibrated confidence thresholds and rate limiting
