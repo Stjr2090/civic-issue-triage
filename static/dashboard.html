@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Civic Issue Triage — Dashboard</title>
+<title>Reporta - Dashboard</title>
 <style>
   :root {
     --bg: #0f172a; --card: #1e293b; --border: #334155;
@@ -132,7 +132,7 @@
     </thead>
     <tbody id="rows"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
   </table>
-  <p id="auth-hint" class="is-hidden" style="color:var(--muted);font-size:.9rem;margin-top:12px;">Admin sign-in required — public report form stays at /</p>
+  <p id="auth-hint" class="is-hidden" style="color:var(--muted);font-size:.9rem;margin-top:12px;">Admin sign-in required. Public report form stays at /</p>
 </div>
 
 <div class="detail-backdrop" id="detail-backdrop" hidden>
@@ -159,7 +159,7 @@
     el("auth-hint").classList.remove("is-hidden");
     el("auth-box").classList.add("auth-prompt");
     var state = el("auth-state");
-    state.textContent = "session expired — sign in";
+    state.textContent = "session expired - sign in";
     state.style.color = "var(--u1)";
     closeDetail();
     el("auth-user").focus();
@@ -255,8 +255,8 @@
     h.push('<div class="kv"><b>Status</b><span>' + esc(rep.status) + "</span></div>");
     h.push('<div class="kv"><b>Category</b><span>' + (CATS[rep.category] || esc(rep.category)) + "</span></div>");
     h.push('<div class="kv"><b>Source</b><span>' + esc(rep.source) + "</span></div>");
-    h.push('<div class="kv"><b>Reporter</b><span>' + esc(rep.reporter || "—") + "</span></div>");
-    h.push('<div class="kv"><b>Location</b><span>' + esc(rep.location || "—") + "</span></div>");
+    h.push('<div class="kv"><b>Reporter</b><span>' + esc(rep.reporter || "n/a") + "</span></div>");
+    h.push('<div class="kv"><b>Location</b><span>' + esc(rep.location || "n/a") + "</span></div>");
     h.push('<p class="body">' + esc(rep.description) + "</p>");
 
     h.push("<h3>Analysis</h3>");

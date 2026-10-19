@@ -15,7 +15,7 @@ API_BASE = os.environ.get("API_BASE", "http://localhost:8000").rstrip("/")
 CATEGORIES = ("roads", "water", "waste", "public_services", "other")
 
 INSTRUCTIONS = (
-    "Civic Issue Triage bot.\n"
+    "Reporta bot.\n"
     "Pick a category below, then describe the issue in your next message "
     "and I will queue it for the right authority."
 )

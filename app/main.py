@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.routers import auth, reports
 
-app = FastAPI(title="Civic Issue Triage", version="0.1.0")
+app = FastAPI(title="Reporta", version="0.1.0")
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 app.include_router(reports.router, prefix="/api")

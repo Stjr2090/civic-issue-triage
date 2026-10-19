@@ -409,8 +409,8 @@ def test_dashboard_signed_out_shell_has_auth_prompt_markup():
 def test_dashboard_401_flow_contract_static():
     src = DASHBOARD_HTML
     assert "function handle401" in src
-    assert "session expired — sign in" in src
-    assert "Admin sign-in required — public report form stays at /" in src
+    assert "session expired - sign in" in src
+    assert "Admin sign-in required. Public report form stays at /" in src
     # Each gated fetch (stats, list, detail, both route paths) branches on 401.
     assert src.count("r.status === 401") >= 5
     # 401 hides the data panels and surfaces the sign-in box.
