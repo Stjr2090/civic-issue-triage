@@ -17,8 +17,8 @@
     background: var(--bg); color: var(--text); padding: 24px 16px;
   }
   .wrap { max-width: 960px; margin: 0 auto; }
-  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  h1 { font-size: 1.4rem; }
+  header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .logo-header img { height: 44px; width: auto; display: block; }
   header a { color: var(--accent); font-size: .85rem; text-decoration: none; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
@@ -76,7 +76,10 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Priority Dashboard</h1>
+    <span class="logo-header">
+      <img src="/static/reporta-logo-cropped.svg" alt="Reporta logo"
+           onerror="this.remove()">
+    </span>
     <span id="auth-box" style="display:flex;gap:8px;align-items:center;font-size:.85rem;">
       <input id="auth-user" placeholder="admin user" autocomplete="username"
         style="padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);width:9rem;">
