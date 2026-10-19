@@ -2,11 +2,12 @@
 import json
 import sqlite3
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from app import classifier
 from app.db import DB_PATH
+from app.routers.auth import require_admin
 
 router = APIRouter()
 
@@ -127,9 +128,14 @@ def get_report(report_id: int):
         conn.close()
 
 
-@router.get("/reports/{report_id}/detail")
+@router.get("/reports/{report_id}/detail", dependencies=[Depends(require_admin)])
 def report_detail(report_id: int):
-    """Admin case detail: report, analysis, routing history, options, attachments."""
+    """Admin case detail: report, analysis, routing history, options, attachments.
+
+    Admin visibility affordance: protected by session auth like the mutating
+    routes (Phase 2 shipped this unauthenticated-for-now; enforcement lands
+    with the auth lane).
+    """
     conn = get_conn()
     try:
         row = conn.execute(
@@ -197,7 +203,7 @@ def report_detail(report_id: int):
         conn.close()
 
 
-@router.patch("/reports/{report_id}/status")
+@router.patch("/reports/{report_id}/status", dependencies=[Depends(require_admin)])
 def update_status(report_id: int, status: str = Query(...)):
     if status not in VALID_STATUSES:
         raise HTTPException(422, f"status must be one of {VALID_STATUSES}")
@@ -272,9 +278,14 @@ def list_authorities(
         conn.close()
 
 
-@router.get("/route/{report_id}")
+@router.get("/route/{report_id}", dependencies=[Depends(require_admin)])
 def route_report(report_id: int):
-    """Route a report to the active authority for its category."""
+    """Route a report to the active authority for its category.
+
+    GET verb kept for the dashboard route button (no API change), but this
+    endpoint mutates state (status -> routed + audit row), so it is
+    session-protected like PATCH /status.
+    """
     conn = get_conn()
     try:
         report = conn.execute(

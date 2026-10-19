@@ -51,6 +51,20 @@ ls /etc/nginx /etc/caddy 2>/dev/null   # reverse proxy present?
   empty defaults: an unset variable arrives as an empty string, which keeps
   the app fail-closed (no key -> keyword mode / transcriber unavailable)
   instead of crashing compose interpolation.
+- Admin session auth (feature/auth-mutating-routes) adds `ADMIN_USERNAME`
+  and `ADMIN_PASSWORD`, passed through by compose with the same empty-default
+  pattern. Fail-closed: with either variable unset or empty, login returns
+  401 and issues no session, and every protected route (PATCH
+  `/api/reports/{id}/status`, GET `/api/route/{id}`, GET
+  `/api/reports/{id}/detail`) returns 401. Intake and all other reads stay
+  public. `JWT_SECRET` is required for signing the stateless session token;
+  without it (unset or empty) login returns 401 and issues nothing and every
+  protected route returns 401. `JWT_TTL_SECONDS` is optional and defaults to
+  12h (43200s). Sessions are stateless HS256 JWTs verified per request, so an
+  unexpired token survives a server restart. Set `COOKIE_SECURE=1` on the
+  public HTTPS deploy so the session cookie carries the Secure flag; leave it
+  unset for plain-http localhost admin testing (browsers drop Secure cookies
+  over http).
 - The live dev path today is bare uvicorn with the environment from the
   shell; compose is the container path. Compose parity exists so a future
   compose run cannot silently lose the Groq/audio configuration.

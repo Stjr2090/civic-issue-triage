@@ -25,6 +25,23 @@ from app.main import app  # noqa: E402
 
 client = TestClient(app)
 
+# Auth era: PATCH status, GET route/{id} and GET detail require an admin
+# session (fail-closed protection is covered in test_auth_gate.py). Legacy
+# tests below assumed an open admin surface. The auth suite clears the
+# shared in-memory session store between its tests, so the legacy client
+# re-authenticates before each test instead of holding one token.
+os.environ["ADMIN_USERNAME"] = "legacy-suite"
+os.environ["ADMIN_PASSWORD"] = "legacy-only"
+
+
+@pytest.fixture(autouse=True)
+def _admin_session():
+    r = client.post(
+        "/api/admin/login",
+        json={"username": "legacy-suite", "password": "legacy-only"},
+    )
+    assert r.status_code == 200, r.text
+
 
 def test_create_and_get_report():
     r = client.post("/api/reports", json={

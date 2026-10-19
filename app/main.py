@@ -5,12 +5,13 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.routers import reports
+from app.routers import auth, reports
 
 app = FastAPI(title="Civic Issue Triage", version="0.1.0")
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 app.include_router(reports.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
