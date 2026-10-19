@@ -85,7 +85,7 @@ def create_report(payload: ReportIn):
         conn.close()
 
 
-@router.get("/reports")
+@router.get("/reports", dependencies=[Depends(require_admin)])
 def list_reports(
     status: str | None = None,
     category: str | None = None,
@@ -116,7 +116,7 @@ def list_reports(
         conn.close()
 
 
-@router.get("/reports/{report_id}")
+@router.get("/reports/{report_id}", dependencies=[Depends(require_admin)])
 def get_report(report_id: int):
     conn = get_conn()
     try:
@@ -226,7 +226,7 @@ def update_status(report_id: int, status: str = Query(...)):
         conn.close()
 
 
-@router.get("/stats")
+@router.get("/stats", dependencies=[Depends(require_admin)])
 def stats():
     """Aggregates for the dashboard: counts by status and category."""
     conn = get_conn()
