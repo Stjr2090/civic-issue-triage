@@ -50,7 +50,7 @@ Reporta lets citizens report local service-delivery problems through a **web for
 
 The system is designed to **degrade gracefully and fail closed**: intake never blocks on the AI, safety-critical reports are never under-prioritised, and uncertain cases go to a human instead of being auto-routed.
 
-**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard)
+**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard), plus the **Telegram intake bot** live on the same deployment
 
 ---
 
@@ -157,9 +157,6 @@ A report is flagged for human review instead of being auto-routed when any of th
 
 Every classification and routing decision is appended to an audit log so outcomes can be reviewed after the fact.
 
-### Limits we state openly
-
-Confidence is model-reported, not calibrated. The review threshold is a heuristic, not a measured operating point. Keyword matching is blunt and can over-flag, which is the safe direction.
 
 ---
 
@@ -263,17 +260,19 @@ The bot uses **outbound long-polling only**, so no inbound ports are needed. A g
 pytest
 ```
 
-The suite contains 27 tests. They require no API keys and no network access, so they are safe to run in CI.
+The suite contains 89 tests. They require no API keys and no network access, so they are safe to run in CI.
 
 ---
 
 ## Screenshots
 
-<!-- Screenshots are being added by Stephen. Replace the placeholders below with image links. -->
+![Intake form](docs/reporta-1.PNG)
 
-| Intake form | Priority dashboard |
-|---|---|
-| *Coming soon* | *Coming soon* |
+![Admin dashboard](docs/reporta-2.PNG)
+
+![Telegram bot intake](docs/reporta-3.PNG)
+
+![Case detail](docs/reporta-4.PNG)
 
 ---
 
@@ -292,7 +291,7 @@ The suite contains 27 tests. They require no API keys and no network access, so 
 
 This is a hackathon prototype. We would rather state its edges than hide them.
 
-- **Demo-grade auth.** Intake is public by design; dashboard mutation endpoints are unauthenticated. Add authentication before any real deployment.
+- **Intake is public; the dashboard is admin-only.** Intake stays public by design. Dashboard views and mutation endpoints sit behind login, with JWT sessions that expire after 12 hours.
 - **Single-node SQLite.** One file. Schema changes run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
 - **Confidence is model-reported, not calibrated.** The review threshold is a sensible heuristic, not a measured operating point.
 - **Keyword fallback is blunt.** Substring matching can over-flag (the safe direction), and the safety terms are not an exhaustive multilingual list.
@@ -304,7 +303,7 @@ This is a hackathon prototype. We would rather state its edges than hide them.
 
 ## Roadmap
 
-- [ ] Authentication for dashboard operators
+- [x] Authentication for dashboard operators
 - [ ] PostgreSQL and schema migrations
 - [ ] Notification dispatch (SMS/email) on routing
 - [ ] Calibrated confidence thresholds and rate limiting
