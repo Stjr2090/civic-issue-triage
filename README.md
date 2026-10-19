@@ -1,1 +1,324 @@
-PGRpdiBhbGlnbj0iY2VudGVyIj4KCiMgUmVwb3J0YQoKIyMjIEFJLWFzc2lzdGVkIGNpdmljIGlzc3VlIHRyaWFnZTogcmVwb3J0IGl0LCBjbGFzc2lmeSBpdCwgcm91dGUgaXQsIHRyYWNrIGl0LgoKKmNpdmljLWlzc3VlLXRyaWFnZSDCtyBCdWlsdCBmb3IgdGhlIE5ZTFAgQUkgSGFja2F0aG9uIDIwMjYqCgohW1B5dGhvbl0oaHR0cHM6Ly9pbWcuc2hpZWxkcy5pby9iYWRnZS9QeXRob24tMy4xNC0zNzc2QUI/bG9nbz1weXRob24mbG9nb0NvbG9yPXdoaXRlKQohW0Zhc3RBUEldKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvRmFzdEFQSS0wMDk2ODg/bG9nbz1mYXN0YXBpJmxvZ29Db2xvcj13aGl0ZSkKIVtTUUxpdGVdKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvU1FMaXRlLTAwM0I1Nz9sb2dvPXNxbGl0ZSZsb2dvQ29sb3I9d2hpdGUpCiFbRG9ja2VyXShodHRwczovL2ltZy5zaGllbGRzLmlvL2JhZGdlL0RvY2tlci0yNDk2RUQ/bG9nbz1kb2NrZXImbG9nb0NvbG9yPXdoaXRlKQohW0xpY2Vuc2VdKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvTGljZW5zZS1NSVQtZ3JlZW4pCgoqKltMaXZlIGRlbW9dKGh0dHBzOi8vcmVwb3J0YS5oaW5nYWFpLnRlY2gpKiogwrcgW1F1aWNrc3RhcnRdKCNxdWlja3N0YXJ0KSDCtyBbSG93IGl0IHdvcmtzXSgjaG93LWl0LXdvcmtzKSDCtyBbQVBJXSgjYXBpLXJlZmVyZW5jZSkgwrcgW1RlYW1dKCN0ZWFtKQoKPC9kaXY+CgotLS0KCiMjIFRhYmxlIG9mIENvbnRlbnRzCgoxLiBbT3ZlcnZpZXddKCNvdmVydmlldykKMi4gW1RoZSBQcm9ibGVtXSgjdGhlLXByb2JsZW0pCjMuIFtPdXIgU29sdXRpb25dKCNvdXItc29sdXRpb24pCjQuIFtGZWF0dXJlc10oI2ZlYXR1cmVzKQo1LiBbSG93IEl0IFdvcmtzXSgjaG93LWl0LXdvcmtzKQo2LiBbQUkgTWV0aG9kb2xvZ3ldKCNhaS1tZXRob2RvbG9neSkKNy4gW1RlY2ggU3RhY2tdKCN0ZWNoLXN0YWNrKQo4LiBbUXVpY2tzdGFydF0oI3F1aWNrc3RhcnQpCjkuIFtDb25maWd1cmF0aW9uXSgjY29uZmlndXJhdGlvbikKMTAuIFtUZWxlZ3JhbSBCb3RdKCN0ZWxlZ3JhbS1ib3QpCjExLiBbQVBJIFJlZmVyZW5jZV0oI2FwaS1yZWZlcmVuY2UpCjEyLiBbVGVzdGluZ10oI3Rlc3RpbmcpCjEzLiBbU2NyZWVuc2hvdHNdKCNzY3JlZW5zaG90cykKMTQuIFtUZWFtXSgjdGVhbSkKMTUuIFtLbm93biBMaW1pdGF0aW9uc10oI2tub3duLWxpbWl0YXRpb25zKQoxNi4gW1JvYWRtYXBdKCNyb2FkbWFwKQoxNy4gW0xpY2Vuc2VdKCNsaWNlbnNlKQoKLS0tCgojIyBPdmVydmlldwoKUmVwb3J0YSBsZXRzIGNpdGl6ZW5zIHJlcG9ydCBsb2NhbCBzZXJ2aWNlLWRlbGl2ZXJ5IHByb2JsZW1zIHRocm91Z2ggYSAqKndlYiBmb3JtKiogb3IgYSAqKlRlbGVncmFtIGJvdCoqLiBFdmVyeSByZXBvcnQgaXM6CgotICoqY2xhc3NpZmllZCoqIGZvciB1cmdlbmN5LCB1c2luZyBhbiBBSSBtb2RlbCB3aGVuIGF2YWlsYWJsZSBhbmQga2V5d29yZCBydWxlcyBvdGhlcndpc2UsCi0gKipyb3V0ZWQqKiB0byB0aGUgbG9jYWwgYXV0aG9yaXR5IHJlc3BvbnNpYmxlIGZvciB0aGUgZGVmZWN0LCBhbmQKLSAqKnRyYWNrZWQqKiBvbiBhIHByaW9yaXR5IGRhc2hib2FyZCB3aXRoIGEgZnVsbCBhdWRpdCB0cmFpbC4KClRoZSBzeXN0ZW0gaXMgZGVzaWduZWQgdG8gKipkZWdyYWRlIGdyYWNlZnVsbHkgYW5kIGZhaWwgY2xvc2VkKio6IGludGFrZSBuZXZlciBibG9ja3Mgb24gdGhlIEFJLCBzYWZldHktY3JpdGljYWwgcmVwb3J0cyBhcmUgbmV2ZXIgdW5kZXItcHJpb3JpdGlzZWQsIGFuZCB1bmNlcnRhaW4gY2FzZXMgZ28gdG8gYSBodW1hbiBpbnN0ZWFkIG9mIGJlaW5nIGF1dG8tcm91dGVkLgoKKipMaXZlIHByb2R1Y3Q6KiogaHR0cHM6Ly9yZXBvcnRhLmhpbmdhYWkudGVjaCAocHVibGljIGludGFrZSwgbG9naW4tcHJvdGVjdGVkIGRhc2hib2FyZCksIHBsdXMgdGhlICoqVGVsZWdyYW0gaW50YWtlIGJvdCoqIFtAcmVwb3J0YV9jaXZpY19ib3RdKGh0dHBzOi8vdC5tZS9yZXBvcnRhX2NpdmljX2JvdCkgbGl2ZSBvbiB0aGUgc2FtZSBkZXBsb3ltZW50CgotLS0KCiMjIFRoZSBQcm9ibGVtCgpQaHlzaWNhbCBzZXJ2aWNlLWRlbGl2ZXJ5IGRlZmVjdHMgKHBvdGhvbGVzLCBidXJzdCBwaXBlcywgb3ZlcmZsb3dpbmcgd2FzdGUsIGJyb2tlbiBzdHJlZXRsaWdodHMsIGRhbWFnZWQgcHVibGljIGZhY2lsaXRpZXMpIHBlcnNpc3QgaW4gY2l0aWVzIGxvbmcgYWZ0ZXIgY2l0aXplbnMgZmlyc3QgcmVwb3J0IHRoZW0uIEZlYXNpYmlsaXR5IHJlc2VhcmNoIGluIFVnYW5kYSBhbmQgYW4gaW5kZXBlbmRlbnQgbWFya2V0IHN0dWR5IG9mIEthcmFjaGksIFBha2lzdGFuLCBkZXNjcmliZSB0aGUgc2FtZSBmYWlsdXJlIGZyb20gb3Bwb3NpdGUgZW5kcy4KCnwgfCBVZ2FuZGEgfCBLYXJhY2hpLCBQYWtpc3RhbiB8CnwtLS18LS0tfC0tLXwKfCAqKlN0YXRlIG9mIHJlcG9ydGluZyoqIHwgVGhlIHBpcGVsaW5lIGJhcmVseSBleGlzdHMuIHwgQ29tcGxhaW50IGluZnJhc3RydWN0dXJlIGV4aXN0cyBhdCBzY2FsZS4gfAp8ICoqRXZpZGVuY2UqKiB8IE5vIGxvdy1mcmljdGlvbiwgcGVyc2lzdGVudCBjaGFubmVsIHRvIHRoZSBib2R5IHJlc3BvbnNpYmxlIGZvciBmaXhpbmcgYSBkZWZlY3QuIEV4aXN0aW5nIGNoYW5uZWxzIChhIGNhbGwgdG8gYSBjb3VuY2lsb3IsIGEgcmFkaW8gcGhvbmUtaW4sIGEgV2hhdHNBcHAgZ3JvdXAgdGhhdCBkaWVzIHdpdGhpbiBhIHdlZWspIGFyZSBvbmUtb2ZmIGFuZCB1bmFjY291bnRhYmxlLiBObyB2ZXJpZmllZCBwdWJsaWMgYmFzZWxpbmUgZXhpc3RzIGZvciBob3cgbG9uZyBjaXZpYyBpbmNpZGVudHMgdGFrZSB0byByZXNvbHZlLiB8IFRoZSBQYWtpc3RhbiBDaXRpemVuJ3MgUG9ydGFsIGhhcyBwcm9jZXNzZWQgb3ZlciBzaXggbWlsbGlvbiBjb21wbGFpbnRzLCBuZWFybHkgb25lIG1pbGxpb24gb2YgdGhlbSBpbiBtdW5pY2lwYWwgc2VydmljZXMsIHlldCByZXBvcnRlZCBzYXRpc2ZhY3Rpb24gaW4gdGhhdCBjYXRlZ29yeSBpcyA0NyUuIHwKfCAqKkZhaWx1cmUgbW9kZSoqIHwgQ2l0aXplbnMgY2Fubm90IHJlYWNoIHRoZSByaWdodCBib2R5IHBlcnNpc3RlbnRseS4gfCBSZXNwb25zaWJpbGl0eSBmb3Igb25lIHZpc2libGUgcHJvYmxlbSBpcyBzcGxpdCBhY3Jvc3MgbXVsdGlwbGUgYXV0aG9yaXRpZXMgYnkgc2VydmljZSBhbmQgZXhhY3QgbG9jYXRpb24uIER1cGxpY2F0ZSByZXBvcnRzIGFycml2ZSBhcyB1bnJlbGF0ZWQgdGlja2V0cy4gQSBjb21wbGFpbnQgbWFya2VkIHJlc29sdmVkIGlzIG5vdCBpbmRlcGVuZGVudGx5IHZlcmlmaWVkIGFzIGZpeGVkLiB8CgojIyMgVGhlIGdhcAoKVGhlIHByb2JsZW0gaXMgbm90IG9ubHkgd2hldGhlciBhIGNpdGl6ZW4gKmNhbiogcmVwb3J0LiBJdCBpcyB3aGV0aGVyIGVhY2ggcmVwb3J0IGlzOgoKMS4gKipjbGFzc2lmaWVkKiogY29uc2lzdGVudGx5LAoyLiAqKnJvdXRlZCoqIHRvIHRoZSBhdXRob3JpdHkgdGhhdCBhY3R1YWxseSBvd25zIHRoZSBkZWZlY3QsCjMuICoqbGlua2VkIHRvIGR1cGxpY2F0ZXMqKiBzbyByZWN1cnJpbmcgcHJvYmxlbXMgYmVjb21lIHZpc2libGUsIGFuZAo0LiAqKmNsb3NlZCoqIG9ubHkgd2hlbiB0aGUgb3V0Y29tZSBpcyBjb25maXJtZWQuCgpSZXBvcnRzIHRoYXQgZmFpbCBhbnkgb2YgdGhlc2Ugc3RlcHMgZGllIHF1aWV0bHkuIFRoZSBjb3N0LCBpbiBib3RoIG1hcmtldHMsIGlzIGF2b2lkYWJsZSBhY2NpZGVudHMgYW5kIGhlYWx0aCBoYXphcmRzLCB3YXN0ZWQgcHVibGljIHNwZW5kaW5nLCBhbmQgY2l0aXplbnMgd2hvIHN0b3AgcmVwb3J0aW5nIGJlY2F1c2Ugbm90aGluZyBzaG93cyB0aGF0IHJlcG9ydGluZyBjaGFuZ2VzIGFueXRoaW5nLgoKLS0tCgojIyBPdXIgU29sdXRpb24KClRoaXMgcHJvdG90eXBlIGRlbW9uc3RyYXRlcyB0aGUgKipmcm9udCBvZiB0aGF0IHBpcGVsaW5lKio6IGNsYXNzaWZpY2F0aW9uIHdpdGggYSBrZXl3b3JkIGZhbGxiYWNrIGFuZCBhIHNhZmV0eSBmbG9vciwgcm91dGluZyBzdWdnZXN0aW9ucyB3aXRoIGh1bWFuIHJldmlldyBvbiB1bmNlcnRhaW4gY2FzZXMsIGFuZCBzdGF0dXMgdHJhY2tpbmcgb24gYW4gYXVkaXRhYmxlIGRhc2hib2FyZC4KCkR1cGxpY2F0ZSBkZXRlY3Rpb24gYW5kIGNpdGl6ZW4tY29uZmlybWVkIHJlc29sdXRpb24gYXJlIG9uIHRoZSBbcm9hZG1hcF0oI3JvYWRtYXApLgoKLS0tCgojIyBGZWF0dXJlcwoKfCBBcmVhIHwgQ2FwYWJpbGl0eSB8CnwtLS18LS0tfAp8ICoqSW50YWtlKiogfCBQdWJsaWMgd2ViIGZvcm0gYW5kIGEgVGVsZWdyYW0gYm90IHdpdGggYSBndWlkZWQgY2F0ZWdvcnktdGhlbi1kZXNjcmlwdGlvbiBmbG93IHwKfCAqKkNsYXNzaWZpY2F0aW9uKiogfCBIb3N0ZWQgTExNIGZvciB1cmdlbmN5IGFuZCBjYXRlZ29yeSB3aGVuIGF2YWlsYWJsZTsga2V5d29yZCBydWxlcyBvdGhlcndpc2UgfAp8ICoqU2FmZXR5KiogfCBSYWlzZS1vbmx5IHNhZmV0eSBmbG9vciBmb3IgaGF6YXJkIHRlcm1zIChmaXJlLCBmbG9vZCwgc2V3YWdlLCAuLi4pIGluIGV2ZXJ5IG1vZGUgfAp8ICoqSHVtYW4gb3ZlcnNpZ2h0KiogfCBGYWlsLWNsb3NlZCByZXZpZXcgZmxhZ3MgZm9yIHVuY2VydGFpbiwgZGVmYXVsdCwgb3IgZGlzcHV0ZWQgY2xhc3NpZmljYXRpb25zIHwKfCAqKlJvdXRpbmcqKiB8IFJlcG9ydHMgbWFwcGVkIHRvIHNlZWRlZCBsb2NhbCBhdXRob3JpdGllcyB8CnwgKipBdWRpdGFiaWxpdHkqKiB8IEFwcGVuZC1vbmx5IGxvZyBvZiBldmVyeSBjbGFzc2lmaWNhdGlvbiBhbmQgcm91dGluZyBkZWNpc2lvbiB8CnwgKipEYXNoYm9hcmQqKiB8IFByaW9yaXR5IHZpZXcgd2l0aCBmaWx0ZXJzIGZvciBjYXRlZ29yeSwgc3RhdHVzLCByZXZpZXcgZmxhZywgYW5kIHNvdXJjZSB8CgotLS0KCiMjIEhvdyBJdCBXb3JrcwoKYGBgbWVybWFpZApmbG93Y2hhcnQgTFIKICAgIEFbQ2l0aXplbl0gLS0+IEJbV2ViIGZvcm1dCiAgICBBIC0tPiBDW1RlbGVncmFtIGJvdF0KICAgIEIgLS0+IERbUE9TVCAvYXBpL3JlcG9ydHNdCiAgICBDIC0tPiBECiAgICBEIC0tPiBFe0FJIGF2YWlsYWJsZT99CiAgICBFIC0tIFllcyAtLT4gRltMTE0gY2xhc3NpZmljYXRpb25dCiAgICBFIC0tIE5vIG9yIGZhaWx1cmUgLS0+IEdba2V5d29yZCBydWxlc10KICAgIEYgLS0+IEhbU2FmZXR5IGZsb29yXQogICAgRyAtLT4gSAogICAgSCAtLT4Jek5lZWRzIHJldmlldz99XQogICAgSSAtLSBZZXMgLS0+IEpbRmxhZyBmb3IgaHVtYW4gcmV2aWV3XQogICAgSSAtLSBObyAtLT4gS1tSb3V0ZSB0byBhdXRob3JpdHldCiAgICBKIC0tPiBMWyhBdWRpdCBsb2cpXQogICAgSyAtLT4gTAogICAgTCAtLT4gTVtQcmlvcml0eSBkYXNoYm9hcmRdCmBgYAoKMS4gKipJbnRha2UuKiogQSByZXBvcnQgYXJyaXZlcyB2aWEgdGhlIHdlYiBmb3JtIGF0IGAvYCBvciB0aGUgVGVsZWdyYW0gYm90LgoyLiAqKkNsYXNzaWZpY2F0aW9uLioqIFdpdGggYEdST1FfQVBJX0tFWWAgc2V0LCBhIGhvc3RlZCBMTE0gY2xhc3NpZmllcyB1cmdlbmN5IGFuZCBzdWdnZXN0cyBhIGNhdGVnb3J5LiBXaXRob3V0IGEga2V5LCBvciBvbiBhbnkgcHJvdmlkZXIgZmFpbHVyZSwgaW50YWtlIGRlZ3JhZGVzIHRvIGtleXdvcmQgcnVsZXMgYW5kICoqbmV2ZXIgYmxvY2sqKi4KMy4gKipTYWZldHkgZmxvb3IuKiIgSGF6YXJkIHRlcm1zIHJhaXNlIHVyZ2VuY3kgdG8gYSBtaW5pbXVtIGxldmVsLiBUaGUgZmxvb3Igb25seSByYWlzZXMgYW5kIG5ldmVyIGxvd2Vycy4KNC4gKipSZXZpZXcgZ2F0ZS4qKiBVbmNlcnRhaW4gb3IgZGVmYXVsdCByZXN1bHRzIGFyZSBmbGFnZ2VkIGZvciBhIGh1bWFuIGluc3RlYWQgb2YgYmVpbmcgYXV0by1yb3V0ZWQuCjUuICoqUm91dGluZyBhbmQgYXVkaXQuKiogUmVwb3J0cyBtYXAgdG8gc2VlZGVkIGxvY2FsIGF1dGhvcml0aWVzLCBhbmQgZXZlcnkgZGVjaXNpb24gaXMgYXBwZW5kZWQgdG8gdGhlIGF1ZGl0IGxvZy4KCi0tLQoKIyMgQUkgTWV0aG9kb2xvZ3kKCiMjIyBDbGFzc2lmaWNhdGlvbgoKV2hlbiBgR1JPUV9BUElfS0VZYCBpcyBzZXQsIGVhY2ggcmVwb3J0IGlzIHNlbnQgdG8gdGhlIG1vZGVsLCB3aGljaCBtdXN0IHJldHVybiAqKnN0cmljdCBKU09OKiouIFRoZSBjYWxsIGlzIHRpbWVvdXQtZ3VhcmRlZCAoYENMQVNTSUZJRVJfVElNRU9VVGAsIGRlZmF1bHQgNSBzZWNvbmRzKSBhbmQgcmV0cmllZCBvbmNlIG9uIGEgbWFsZm9ybWVkIG9yIGZhaWxlZCByZXNwb25zZS4KCiMjIyBHcmFjZWZ1bCBkZWdyYWRhdGlvbgoKSWYgdGhlcmUgaXMgbm8ga2V5LCBvciB0aGUgcHJvdmlkZXIgdGltZXMgb3V0IG9yIGVycm9ycywgaW50YWtlIGZhbGxzIGJhY2sgdG8ga2V5d29yZCBydWxlcy4gU3VibWl0dGluZyBhIHJlcG9ydCBuZXZlciBkZXBlbmRzIG9uIHRoZSBBSSBiZWluZyB1cC4KCiMjIyBTYWZldHkgZmxvb3IKClNhZmV0eS10ZXJtIG1hdGNoZXMgKGZpcmUsIGZsb29kLCBzZXdhZ2UsIC4uLikgcmFpc2UgdXJnZW5jeSB0byBhdCBsZWFzdCBgQ0xBU1NJRklFUl9TQUZFVFlfRkxPUmAgKGRlZmF1bHQgYDVgKS4gVGhlIGZsb29yIGlzICoqcmFpc2Utb25seSoqOiBpdCBuZXZlciBsb3dlcnMgdXJnZW5jeSwgaW4gYm90aCBBSSBhbmQga2V5d29yZCBtb2Rlcy4KCiMjIyBGYWlsLWNsb3NlZCBodW1hbiByZXZpZXcKCkEgcmVwb3J0IGlzIGZsYWdnZWQgZm9yIGh1bWFuIHJldmlldyBpbnN0ZWFkIG9mIGJlaW5nIGF1dG8tcm91dGVkIHdoZW4gYW55IG9mIHRoZSBmb2xsb3dpbmcgaG9sZHM6Cgp8IFRyaWdnZXIgfCBXaHkgfAp8LS0tfC0tLXwKfCBDYXRlZ29yeSBpcyBgb3RoZXJgIHwgTm8gcmVsaWFibGUgYXV0aG9yaXR5IG1hdGNoIHwKfCBDbGFzc2lmaWVkIGluIGtleXdvcmQgbW9kZSB8IFJ1bGVzIGFyZSBibHVudCwgc28gYSBwZXJzb24gc2hvdWxkIGNvbmZpcm0gfAp8IENvbmZpZGVuY2UgYmVsb3cgYENMQVNTSUZJQ0FUSU9OX0NPTkZJREVOQ0VfRkxPT1JgIChkZWZhdWx0IGAwLjYwYCkgfCBUaGUgbW9kZWwgaXMgdW5zdXJlIHwKfCBNb2RlbCBkaXNhZ3JlZW1lbnRzIHwgQ29uZmxpY3Rpbmcgc2lnbmFscyBzaG91bGQgbm90IGJlIGF1dG8tcmVzb2x2ZWQgfAoKIyMjIEF1ZGl0YWJpbGl0eQoKRXZlcnkgY2xhc3NpZmljYXRpb24gYW5kIHJvdXRpbmcgZGVjaXNpb24gaXMgYXBwZW5kZWQgdG8gYW4gYXVkaXQgbG9nIHNvIG91dGNvbWVzIGNhbiBiZSByZXZpZXdlZCBhZnRlciB0aGUgZmFjdC4KCgotLS0KCiMjIFRlY2ggU3RhY2sKCnwgTGF5ZXIgfCBUZWNobm9sb2d5IHwKfC0tLXwtLS18CnwgTGFuZ3VhZ2UgfCBQeXRob24gMy4xNCB8CnwgQmFja2VuZCB8IEZhc3RBUEkgfAp8IERhdGFiYXNlIHwgU1FMaXRlIChubyBkYXRhYmFzZSBzZXJ2ZXIgcmVxdWlyZWQpIHwKfCBBSSB8IEdyb3EtaG9zdGVkIExMTSAoYG9wZW5haS9ncHQtb3NzLTEyMGJgIGluIHRoZSBkZXBsb3llZCBpbnN0YW5jZSkgfAp8IE1lc3NhZ2luZyB8IFRlbGVncmFtIEJvdCBBUEkgKG91dGJvdW5kIGxvbmctcG9sbGluZykgfAp8IFBhY2thZ2luZyB8IERvY2tlciwgRG9ja2VyIENvbXBvc2UgfAp8IFRlc3RpbmcgfCBweXRlc3QgfAoKKipBUEkgdXNhZ2UqKgoKLSAqKkdyb3EgQVBJOioqIGNsYXNzaWZpZXMgdXJnZW5jeSBhbmQgc3VnZ2VzdHMgYSBjYXRlZ29yeSBmb3IgZWFjaCByZXBvcnQuCi0gKipUZWxlZ3JhbSBCb3QgQVBJOioqIGNpdGl6ZW4gaW50YWtlIGNoYW5uZWwuCi0gVm9pY2Utbm90ZSB0cmFuc2NyaXB0aW9uIChgV0hJU1BFUl9NT0RFTGApIGlzIHBsYW5uZWQgYW5kIG5vdCBlbmFibGVkIGluIHRoaXMgZGVwbG95bWVudC4KCi0tLQoKIyMgUXVpY2tzdGFydAoKKipQcmVyZXF1aXNpdGVzOioqIFB5dGhvbiAzLjE0IChvciBEb2NrZXIpLgoKYGBgYmFzaApnaXQgY2xvbmUgaHR0cHM6Ly9naXRodWIuY29tL1N0anIyMDkwL2NpdmljLWlzc3VlLXRyaWFnZQpjZCBjaXZpYy1pc3N1ZS10cmlhZ2UKcHl0aG9uMyAtbSB2ZW52IC52ZW52ICYmIHNvdXJjZSAudmVudi9iaW4vYWN0aXZhdGUKcGlwIGluc3RhbGwgLXIgcmVxdWlyZW1lbnRzLnR4dApweXRob24gc2NyaXB0cy9zZWVkLnB5ICAgICAgICAgICMgc2VlZHMgOCBzYW1wbGUgYXV0aG9yaXRpZXMKdXZpY29ybiBhcHAubWFpbjphcHAgLS1ob3N0IDAuMC4wLjAgLS1wb3J0IDgwMDAKYGBgCgp8IFVSTCB8IFB1cnBvc2UgfAp8LS0tfC0tLXwKfCBgaHR0cDovL2xvY2FsaG9zdDo4MDAwYCB8IEludGFrZSBmb3JtIHwKfCBgaHR0cDovL2xvY2FsaG9zdDo4MDAwL2Rhc2hib2FyZGAgfCBQcmlvcml0eSBkYXNoYm9hcmQgfAoKKipXaXRoIERvY2tlcioqCgpgYGBiYXNoCmRvY2tlciBjb21wb3NlIHVwIC0tYnVpbGQgICAgICAgIyBQT1JUIGVudiB2YXIgb3ZlcnJpZGVzIHRoZSBkZWZhdWx0IDgwMDAKYGBgCgotLS0KCiMjIENvbmZpZ3VyYXRpb24KCkFsbCBlbnZpcm9ubWVudCB2YXJpYWJsZXMgYXJlICoqb3B0aW9uYWwqKi4gVGhlIGFwcCBydW5zIHdpdGggc2Vuc2libGUgZGVmYXVsdHMgYW5kIGRlZ3JhZGVzIGdyYWNlZnVsbHkuCgp8IFZhcmlhYmxlIHwgRGVmYXVsdCB8IFB1cnBvc2UgfAp8LS0tfC0tLXwtLS18CnwgYERBVEFCQVNFX1BBVEhgIHwgYC4vZGF0YS9jaXZpYy5kYmAgfCBTUUxpdGUgZGF0YWJhc2UgbG9jYXRpb24gfAp8IGBQT1JUYCB8IGA4MDAwYCB8IFNlcnZlciBwb3J0IChEb2NrZXIgaW1hZ2UpIHwKfCBgR1JPUV9BUElfS0VZYCB8IG5vbmUgfCBFbmFibGVzIEFJIGNsYXNzaWZpY2F0aW9uOyB3aXRob3V0IGl0LCBrZXl3b3JkIGZhbGxiYWNrIGlzIHVzZWQgfAp8IGBHUk9RX01PREVMYCB8IGBvcGVuYWkvZ3B0LW9zcy0xMjBiYCAoZGVwbG95ZWQpIHwgQ2hhdCBtb2RlbCB1c2VkIGZvciBjbGFzc2lmaWNhdGlvbjsgc2V0IGEgY2hhdC1jYXBhYmxlIG1vZGVsIGF2YWlsYWJsZSBvbiB5b3VyIGFjY291bnQgfAp8IGBXSElTUEVSX01PREVMYCB8IG5vbmUgfCBWb2ljZS1ub3RlIHRyYW5zY3JpcHRpb24gKGF1ZGlvIGludGFrZSk7IGNvbWluZyBzb29uLCBub3QgZW5hYmxlZCBpbiB0aGlzIGRlcGxveW1lbnQgfAp8IGBDTEFTU0lGSUVSX1RJTUVPVVRgIHwgYDVgIHwgU2Vjb25kcyBiZWZvcmUgdGhlIEFJIGNhbGwgZ2l2ZXMgdXAgYW5kIGZhbGxzIGJhY2sgfAp8IGBDTEFTU0lGSUVSX1NBRkVUWV9GTE9PUmAgfCBgNWAgfCBNaW5pbXVtIHVyZ2VuY3kgZm9yIHNhZmV0eS10ZXJtIG1hdGNoZXMgKHJhaXNlLW9ubHkpIHwKfCBgQ0xBU1NJRklDQVRJT05fQ09ORklERU5DRV9GTE9PUmAgfCBgMC42MGAgfCBDb25maWRlbmNlIGJlbG93IHRoaXMgc2VuZHMgYSByZXBvcnQgdG8gaHVtYW4gcmV2aWV3IHwKfCBgVEVMRUdSQU1fQk9UX1RPS0VOYCB8IG5vbmUgfCBFbmFibGVzIHRoZSBUZWxlZ3JhbSBib3QgfAp8IGBBUElfQkFTRWAgfCBgaHR0cDovL2xvY2FsaG9zdDo4MDAwYCB8IEFQSSBVUkwgdGhlIFRlbGVncmFtIGJvdCB0YWxrcyB0byB8Cgo+ICoqU2VjdXJpdHkgbm90ZToqKiBzZWNyZXRzIGJlbG9uZyBpbiBgLmVudmAgKGFscmVhZHkgZXhjbHVkZWQgdmlhIGAuZ2l0aWdub3JlYCBhbmQgYC5kb2NrZXJpZ25vcmVgKSwgbmV2ZXIgaW4gdGhlIHJlcG9zaXRvcnkuCgotLS0KCiMjIFRlbGVncmFtIEJvdAoKYGBgYmFzaApleHBvcnQgVEVMRUdSQU1fQk9UX1RPS0VOPXlvdXItdG9rZW4KcHl0aG9uIC1tIGFwcC50ZWxlZ3JhbV9ib3QKYGBgCgpUaGUgYm90IHVzZXMgKipvdXRib3VuZCBsb25nLXBvbGxpbmcgb25seSoqLCBzbyBubyBpbmJvdW5kIHBvcnRzIGFyZSBuZWVkZWQuIEEgZ3VpZGVkIGNvbnZlcnNhdGlvbiAoY2F0ZWdvcnksIHRoZW4gZGVzY3JpcHRpb24pIGZpbGVzIG9uZSByZXBvcnQsIHdpdGggdGhlIHJlcG9ydGVyJ3MgaGFuZGxlIHJlY29yZGVkIGFzIHNvdXJjZSBhdHRyaWJ1dGlvbi4KCi0tLQoKIyMgQVBJIFJlZmVyZW5jZQoKfCBNZXRob2QgfCBQYXRoIHwgUHVycG9zZSB8CnwtLS18LS0tfC0tLXwKfCBgUE9TVGAgfCBgL2FwaS9yZXBvcnRzYCB8IEZpbGUgYSByZXBvcnQgfAp8IGBHRVRgIHwgYC9hcGkvcmVwb3J0c2AgfCBMaXN0IHJlcG9ydHMgKGZpbHRlcnM6IGA/Y2F0ZWdvcnk9YCwgYD9zdGF0dXM9YCwgYD9uZWVkc19yZXZpZXc9YCwgYD9zb3VyY2U9YCkgfAp8IGBHRVRgIHwgYC9hcGkvcmVwb3J0cy97aWR9YCB8IFJlcG9ydCBkZXRhaWwgfAp8IGBQQVRDSGAgfCBgL2FwaS9yZXBvcnRzL3tpZH0vc3RhdHVzYCB8IFVwZGF0ZSByZXBvcnQgc3RhdHVzIHwKfCBgR0VUYCB8IGAvYXBpL3N0YXRzYCB8IERhc2hib2FyZCBhZ2dyZWdhdGVzIHwKfCBgR0VUYCB8IGAvYXBpL2F1dGhvcml0aWVzYCB8IFNlZWRlZCBsb2NhbCBhdXRob3JpdGllcyB8CnwgYEdFVGAgfCBgL2FwaS9yb3V0ZS97aWR9YCB8IFJvdXRlIGEgcmVwb3J0IHRvIGl0cyBtYXRjaGluZyBhdXRob3JpdHkgKGA0MDlgIHdoZW4gbm8gbWF0Y2gpIHwKfCBgR0VUYCB8IGAvYCB8IEludGFrZSBmb3JtIHwKfCBgR0VUYCB8IGAvZGFzaGJvYXJkYCB8IFByaW9yaXR5IGRhc2hib2FyZCB8CgotLS0KCiMjIFRlc3RpbmcKCmBgYGJhc2gKcHl0ZXN0CmBgYAoKVGhlIHN1aXRlIGNvbnRhaW5zIDg5IHRlc3RzLiBUaGV5IHJlcXVpcmUgbm8gQVBJIGtleXMgYW5kIG5vIG5ldHdvcmsgYWNjZXNzLCBzbyB0aGV5IGFyZSBzYWZlIHRvIHJ1biBpbiBDSS4KCi0tLQoKIyMgU2NyZWVuc2hvdHMKCiFbSW50YWtlIGZvcm1dKGRvY3MvcmVwb3J0YS0xLlBORykKCiFbQWRtaW4gZGFzaGJvYXJkXShkb2NzL3JlcG9ydGEtMi5QTkcpCgohW1RlbGVncmFtIGJvdCBpbnRha2VdKGRvY3MvcmVwb3J0YS0zLlBORykKCiFbQ2FzZSBkZXRhaWxdKGRvY3MvcmVwb3J0YS00LlBORykKCi0tLQoKIyMgVGVhbQoKfCBOYW1lIHwgUm9sZSB8CnwtLS18LS0tfAp8ICoqVHVtdXNpaW1lIFN0ZXBoZW4qKiB8IEJhY2tlbmQgYW5kIEFQSSBpbnRlZ3JhdGlvbnMgfAp8ICoqTXVoYW1tYWQgWW91bmFzKiogfCBGcm9udCBlbmQgYW5kIHByb2R1Y3QgZGVzaWduIHwKfCAqKlNhZGFmIE11c3RhZmEqKiB8IERlbW8gYW5kIHByZXNlbnRhdGlvbiB8CnwgKipBaXNoYSBQKiogfCBGZWFzaWJpbGl0eSByZXNlYXJjaCBhbmQgZmluYWwgc3VibWlzc2lvbiB8CgotLS0KCiMjIEtub3duIExpbWl0YXRpb25zCgpUaGlzIGlzIGEgaGFja2F0aG9uIHByb3RvdHlwZS4gV2Ugd291bGQgcmF0aGVyIHN0YXRlIGl0cyBlZGdlcyB0aGFuIGhpZGUgdGhlbS4KCi0gKipJbnRha2UgaXMgcHVibGljOyB0aGUgZGFzaGJvYXJkIGlzIGFkbWluLW9ubHkuKiogSW50YWtlIHN0YXlzIHB1YmxpYyBieSBkZXNpZ24uIERhc2hib2FyZCB2aWV3cyBhbmQgbXV0YXRpb24gZW5kcG9pbnRzIHNpdCBiZWhpbmQgbG9naW4sIHdpdGggSldUIHNlc3Npb25zIHRoYXQgZXhwaXJlIGFmdGVyIDEyIGhvdXJzLgotICoqU2luZ2xlLW5vZGUgU1FMaXRlLioqIE9uZSBmaWxlLiBTY2hlbWEgY2hhbmdlcyBydW4gdGhyb3VnaCBhIHNtYWxsIGlkZW1wb3RlbnQgU1FMIG1pZ3JhdGlvbiBsb2FkZXIgKGBkYi9taWdyYXRpb25zYCkgcmF0aGVyIHRoYW4gYSBmdWxsIG1pZ3JhdGlvbiBmcmFtZXdvcmssIGFuZCBoZWF2aWVyIHNjaGVtYSB3b3JrIHN0aWxsIGZhdm9ycyBhIGZyZXNoIHZvbHVtZSBhbmQgcmUtc2VlZC4KLSAqKkNvbmZpZGVuY2UgaXMgbW9kZWwtcmVwb3J0ZWQsIG5vdCBjYWxpYnJhdGVkLioqIFRoZSByZXZpZXcgdGhyZXNob2xkIGlzIGEgc2Vuc2libGUgaGV1cmlzdGljLCBub3QgYSBtZWFzdXJlZCBvcGVyYXRpbmcgcG9pbnQuCi0gKipLZXl3b3JkIGZhbGxiYWNrIGlzIGJsdW50LioqIFN1YnN0cmluZyBtYXRjaGluZyBjYW4gb3Zlci1mbGFnICh0aGUgc2FmZSBkaXJlY3Rpb24pLCBhbmQgdGhlIHNhZmV0eSB0ZXJtcyBhcmUgbm90IGFuIGV4aGF1c3RpdmUgbXVsdGlsaW5ndWFsIGxpc3QuCi0gKipJbnRha2UgaXMgdW50aHJvdHRsZWQuKiogTm8gcmF0ZSBsaW1pdGluZyBvbiBlaXRoZXIgaW50YWtlIHBhdGguCi0gKipSb3V0aW5nIHJlY29yZHMgaW50ZW50LCBpdCBkb2VzIG5vdCBkaXNwYXRjaC4qKiBBdXRob3JpdGllcyBhbmQgY29udGFjdHMgYXJlIHNlZWQgZGF0YTsgbm8gU01TIG9yIGVtYWlsIGlzIHNlbnQuCi0gKipSZXBvcnRlciBmaWVsZHMgYXJlIHN0b3JlZCBpbiBwbGFpbnRleHQuKiogUmVhbCBkZXBsb3ltZW50cyBuZWVkIGVuY3J5cHRpb24gYW5kIGEgcmV0ZW50aW9uIHBvbGljeS4KCi0tLQoKIyMgUm9hZG1hcAoKLSBbeF0gQXV0aGVudGljYXRpb24gZm9yIGRhc2hib2FyZCBvcGVyYXRvcnMKLSBbIF0gUG9zdGdyZVNRTCBhbmQgc2NoZW1hIG1pZ3JhdGlvbnMKLSBbIF0gTm90aWZpY2F0aW9uIGRpc3BhdGNoIChTTVMvZW1haWwpIG9uIHJvdXRpbmcKLSBbIF0gQ2FsaWJyYXRlZCBjb25maWRlbmNlIHRocmVzaG9sZHMgYW5kIHJhdGUgbGltaXRpbmcKLSBbIF0gRGVlcGVyIG11bHRpbGluZ3VhbCBpbnRha2Ugc3VwcG9ydAotIFsgXSBEdXBsaWNhdGUgZGV0ZWN0aW9uIGFjcm9zcyByZXBvcnRzCi0gWyBdIENpdGl6ZW4tY29uZmlybWVkIHJlc29sdXRpb24KCi0tLQoKIyMgTGljZW5zZQoKUmVsZWFzZWQgdW5kZXIgdGhlIFtNSVQgTGljZW5zZV0oTElDRU5TRSkuCgo8ZGl2IGFsaWduPSJjZW50ZXIiPgoKKkJ1aWx0IGZvciB0aGUgTllMUCBBSSBIYWNrYXRob24gMjAyNi4qCgo8L2Rpdj4K
+<div align="center">
+
+# Reporta
+
+### AI-assisted civic issue triage: report it, classify it, route it, track it.
+
+*civic-issue-triage · Built for the NYLP AI Hackathon 2026*
+
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+**[Live demo](https://reporta.hingaai.tech)** · [Quickstart](#quickstart) · [How it works](#how-it-works) · [API](#api-reference) · [Team](#team)
+
+</div>
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [The Problem](#the-problem)
+3. [Our Solution](#our-solution)
+4. [Features](#features)
+5. [How It Works](#how-it-works)
+6. [AI Methodology](#ai-methodology)
+7. [Tech Stack](#tech-stack)
+8. [Quickstart](#quickstart)
+9. [Configuration](#configuration)
+10. [Telegram Bot](#telegram-bot)
+11. [API Reference](#api-reference)
+12. [Testing](#testing)
+13. [Screenshots](#screenshots)
+14. [Team](#team)
+15. [Known Limitations](#known-limitations)
+16. [Roadmap](#roadmap)
+17. [License](#license)
+
+---
+
+## Overview
+
+Reporta lets citizens report local service-delivery problems through a **web form** or a **Telegram bot**. Every report is:
+
+- **classified** for urgency, using an AI model when available and keyword rules otherwise,
+- **routed** to the local authority responsible for the defect, and
+- **tracked** on a priority dashboard with a full audit trail.
+
+The system is designed to **degrade gracefully and fail closed**: intake never blocks on the AI, safety-critical reports are never under-prioritised, and uncertain cases go to a human instead of being auto-routed.
+
+**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard), plus the **Telegram intake bot** [@reporta_civic_bot](https://t.me/reporta_civic_bot) live on the same deployment
+
+---
+
+## The Problem
+
+Physical service-delivery defects (potholes, burst pipes, overflowing waste, broken streetlights, damaged public facilities) persist in cities long after citizens first report them. Feasibility research in Uganda and an independent market study of Karachi, Pakistan, describe the same failure from opposite ends.
+
+| | Uganda | Karachi, Pakistan |
+|---|---|---|
+| **State of reporting** | The pipeline barely exists. | Complaint infrastructure exists at scale. |
+| **Evidence** | No low-friction, persistent channel to the body responsible for fixing a defect. Existing channels (a call to a councillor, a radio phone-in, a WhatsApp group that dies within a week) are one-off and unaccountable. No verified public baseline exists for how long civic incidents take to resolve. | The Pakistan Citizen's Portal has processed over six million complaints, nearly one million of them in municipal services, yet reported satisfaction in that category is 47%. |
+| **Failure mode** | Citizens cannot reach the right body persistently. | Responsibility for one visible problem is split across multiple authorities by service and exact location. Duplicate reports arrive as unrelated tickets. A complaint marked resolved is not independently verified as fixed. |
+
+### The gap
+
+The problem is not only whether a citizen *can* report. It is whether each report is:
+
+1. **classified** consistently,
+2. **routed** to the authority that actually owns the defect,
+3. **linked to duplicates** so recurring problems become visible, and
+4. **closed** only when the outcome is confirmed.
+
+Reports that fail any of these steps die quietly. The cost, in both markets, is avoidable accidents and health hazards, wasted public spending, and citizens who stop reporting because nothing shows that reporting changes anything.
+
+---
+
+## Our Solution
+
+This prototype demonstrates the **front of that pipeline**: classification with a keyword fallback and a safety floor, routing suggestions with human review on uncertain cases, and status tracking on an auditable dashboard.
+
+Duplicate detection and citizen-confirmed resolution are on the [roadmap](#roadmap).
+
+---
+
+## Features
+
+| Area | Capability |
+|---|---|
+| **Intake** | Public web form and a Telegram bot with a guided category-then-description flow |
+| **Classification** | Hosted LLM for urgency and category when available; keyword rules otherwise |
+| **Safety** | Raise-only safety floor for hazard terms (fire, flood, sewage, ...) in every mode |
+| **Human oversight** | Fail-closed review flags for uncertain, default, or disputed classifications |
+| **Routing** | Reports mapped to seeded local authorities |
+| **Auditability** | Append-only log of every classification and routing decision |
+| **Dashboard** | Priority view with filters for category, status, review flag, and source |
+
+---
+
+## How It Works
+
+```mermaid
+flowchart LR
+    A[Citizen] --> B[Web form]
+    A --> C[Telegram bot]
+    B --> D[POST /api/reports]
+    C --> D
+    D --> E{AI available?}
+    E -- Yes --> F[LLM classification]
+    E -- No or failure --> G[Keyword rules]
+    F --> H[Safety floor]
+    G --> H
+    H --> I{Needs review?}
+    I -- Yes --> J[Flag for human review]
+    I -- No --> K[Route to authority]
+    J --> L[(Audit log)]
+    K --> L
+    L --> M[Priority dashboard]
+```
+
+1. **Intake.** A report arrives via the web form at `/` or the Telegram bot.
+2. **Classification.** With `GROQ_API_KEY` set, a hosted LLM classifies urgency and suggests a category. Without a key, or on any provider failure, intake degrades to keyword rules and **never blocks**.
+3. **Safety floor.** Hazard terms raise urgency to a minimum level. The floor only raises and never lowers.
+4. **Review gate.** Uncertain or default results are flagged for a human instead of being auto-routed.
+5. **Routing and audit.** Reports map to seeded local authorities, and every decision is appended to the audit log.
+
+---
+
+## AI Methodology
+
+### Classification
+
+When `GROQ_API_KEY` is set, each report is sent to the model, which must return **strict JSON**. The call is timeout-guarded (`CLASSIFIER_TIMEOUT`, default 5 seconds) and retried once on a malformed or failed response.
+
+### Graceful degradation
+
+If there is no key, or the provider times out or errors, intake falls back to keyword rules. Submitting a report never depends on the AI being up.
+
+### Safety floor
+
+Safety-term matches (fire, flood, sewage, ...) raise urgency to at least `CLASSIFIER_SAFETY_FLOOR` (default `5`). The floor is **raise-only**: it never lowers urgency, in both AI and keyword modes.
+
+### Fail-closed human review
+
+A report is flagged for human review instead of being auto-routed when any of the following holds:
+
+| Trigger | Why |
+|---|---|
+| Category is `other` | No reliable authority match |
+| Classified in keyword mode | Rules are blunt, so a person should confirm |
+| Confidence below `CLASSIFICATION_CONFIDENCE_FLOOR` (default `0.60`) | The model is unsure |
+| Model disagreements | Conflicting signals should not be auto-resolved |
+
+### Auditability
+
+Every classification and routing decision is appended to an audit log so outcomes can be reviewed after the fact.
+
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3.14 |
+| Backend | FastAPI |
+| Database | SQLite (no database server required) |
+| AI | Groq-hosted LLM (`openai/gpt-oss-120b` in the deployed instance) |
+| Messaging | Telegram Bot API (outbound long-polling) |
+| Packaging | Docker, Docker Compose |
+| Testing | pytest |
+
+**API usage**
+
+- **Groq API:** classifies urgency and suggests a category for each report.
+- **Telegram Bot API:** citizen intake channel.
+- Voice-note transcription (`WHISPER_MODEL`) is planned and not enabled in this deployment.
+
+---
+
+## Quickstart
+
+**Prerequisites:** Python 3.14 (or Docker).
+
+```bash
+git clone https://github.com/Stjr2090/civic-issue-triage
+cd civic-issue-triage
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python scripts/seed.py          # seeds 8 sample authorities
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+| URL | Purpose |
+|---|---|
+| `http://localhost:8000` | Intake form |
+| `http://localhost:8000/dashboard` | Priority dashboard |
+
+**With Docker**
+
+```bash
+docker compose up --build       # PORT env var overrides the default 8000
+```
+
+---
+
+## Configuration
+
+All environment variables are **optional**. The app runs with sensible defaults and degrades gracefully.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `DATABASE_PATH` | `./data/civic.db` | SQLite database location |
+| `PORT` | `8000` | Server port (Docker image) |
+| `GROQ_API_KEY` | none | Enables AI classification; without it, keyword fallback is used |
+| `GROQ_MODEL` | `openai/gpt-oss-120b` (deployed) | Chat model used for classification; set a chat-capable model available on your account |
+| `WHISPER_MODEL` | none | Voice-note transcription (audio intake); coming soon, not enabled in this deployment |
+| `CLASSIFIER_TIMEOUT` | `5` | Seconds before the AI call gives up and falls back |
+| `CLASSIFIER_SAFETY_FLOOR` | `5` | Minimum urgency for safety-term matches (raise-only) |
+| `CLASSIFICATION_CONFIDENCE_FLOOR` | `0.60` | Confidence below this sends a report to human review |
+| `TELEGRAM_BOT_TOKEN` | none | Enables the Telegram bot |
+| `API_BASE` | `http://localhost:8000` | API URL the Telegram bot talks to |
+
+> **Security note:** secrets belong in `.env` (already excluded via `.gitignore` and `.dockerignore`), never in the repository.
+
+---
+
+## Telegram Bot
+
+```bash
+export TELEGRAM_BOT_TOKEN=your-token
+python -m app.telegram_bot
+```
+
+The bot uses **outbound long-polling only**, so no inbound ports are needed. A guided conversation (category, then description) files one report, with the reporter's handle recorded as source attribution.
+
+---
+
+## API Reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/api/reports` | File a report |
+| `GET` | `/api/reports` | List reports (filters: `?category=`, `?status=`, `?needs_review=`, `?source=`) |
+| `GET` | `/api/reports/{id}` | Report detail |
+| `PATCH` | `/api/reports/{id}/status` | Update report status |
+| `GET` | `/api/stats` | Dashboard aggregates |
+| `GET` | `/api/authorities` | Seeded local authorities |
+| `GET` | `/api/route/{id}` | Route a report to its matching authority (`409` when no match) |
+| `GET` | `/` | Intake form |
+| `GET` | `/dashboard` | Priority dashboard |
+
+---
+
+## Testing
+
+```bash
+pytest
+```
+
+The suite contains 89 tests. They require no API keys and no network access, so they are safe to run in CI.
+
+---
+
+## Screenshots
+
+![Intake form](docs/reporta-1.PNG)
+
+![Admin dashboard](docs/reporta-2.PNG)
+
+![Telegram bot intake](docs/reporta-3.PNG)
+
+![Case detail](docs/reporta-4.PNG)
+
+---
+
+## Team
+
+| Name | Role |
+|---|---|
+| **Tumusiime Stephen** | Backend and API integrations |
+| **Muhammad Younas** | Front end and product design |
+| **Sadaf Mustafa** | Demo and presentation |
+| **Aisha P** | Feasibility research and final submission |
+
+---
+
+## Known Limitations
+
+This is a hackathon prototype. We would rather state its edges than hide them.
+
+- **Intake is public; the dashboard is admin-only.** Intake stays public by design. Dashboard views and mutation endpoints sit behind login, with JWT sessions that expire after 12 hours.
+- **Single-node SQLite.** One file. Schema changes run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
+- **Confidence is model-reported, not calibrated.** The review threshold is a sensible heuristic, not a measured operating point.
+- **Keyword fallback is blunt.** Substring matching can over-flag (the safe direction), and the safety terms are not an exhaustive multilingual list.
+- **Intake is unthrottled.** No rate limiting on either intake path.
+- **Routing records intent, it does not dispatch.** Authorities and contacts are seed data; no SMS or email is sent.
+- **Reporter fields are stored in plaintext.** Real deployments need encryption and a retention policy.
+
+---
+
+## Roadmap
+
+- [x] Authentication for dashboard operators
+- [ ] PostgreSQL and schema migrations
+- [ ] Notification dispatch (SMS/email) on routing
+- [ ] Calibrated confidence thresholds and rate limiting
+- [ ] Deeper multilingual intake support
+- [ ] Duplicate detection across reports
+- [ ] Citizen-confirmed resolution
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+<div align="center">
+
+*Built for the NYLP AI Hackathon 2026.*
+
+</div>
