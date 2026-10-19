@@ -1,27 +1,191 @@
-# civic-issue-triage
+<div align="center">
 
-Civic issue reporting for the NYLP AI Hackathon 2026. Citizens report problems through a **web form** or a **Telegram bot**; every report is classified for **urgency** (AI when available, keyword rules otherwise), **routed** to the responsible local authority, and tracked on a **priority dashboard**.
+# Reporta
 
-FastAPI + SQLite. Python 3.14. No database server required.
+### AI-assisted civic issue triage: report it, classify it, route it, track it.
 
-## Problem
+*civic-issue-triage · Built for the NYLP AI Hackathon 2026*
 
-Physical service-delivery defects (potholes, burst pipes, overflowing waste, broken streetlights, damaged public facilities) persist in cities long after citizens first report them. Feasibility research in Uganda and an independent market study of Karachi, Pakistan, bracket the same failure from opposite ends.
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-In Uganda, the reporting pipeline barely exists: citizens lack a low-friction, persistent channel to reach the body responsible for fixing a defect; the channels that do exist are one-off and unaccountable (a call to a councillor, a radio phone-in, a WhatsApp group that dies within a week); and no verified public baseline exists for how long civic incidents take to resolve. In Karachi, complaint infrastructure exists at scale: the Pakistan Citizen's Portal has processed over six million complaints, nearly one million of them in municipal services, yet reported satisfaction in that category is 47%. But responsibility for one visible problem is split across multiple authorities depending on service and exact location, duplicate reports of the same defect arrive as unrelated tickets, and a complaint marked resolved is not independently verified as fixed.
+**[Live demo](https://reporta.hingaai.tech)** · [Quickstart](#quickstart) · [How it works](#how-it-works) · [API](#api-reference) · [Team](#team)
 
-The two pictures converge on one gap: the problem is not only whether a citizen can report, but whether each report is classified consistently, routed to the authority that actually owns the defect, linked to duplicates so recurring problems become visible, and closed only when the outcome is confirmed. Reports that fail any of these steps die quietly. The cost, in both markets, is avoidable accidents and health hazards, wasted public spending, and citizens who stop reporting because nothing shows that reporting changes anything.
+</div>
 
-This prototype demonstrates the front of that pipeline: classification with a keyword fallback and a safety floor, routing suggestions with human review on uncertain cases, and status tracking on an auditable dashboard. Duplicate detection and citizen-confirmed resolution remain on the roadmap.
+---
 
-## How it works
+## Table of Contents
 
-1. **Intake** — web form at `/`, or the Telegram bot with a category keyboard.
-2. **Classification** — with `GROQ_API_KEY` set, a hosted LLM classifies urgency and suggests a category (strict JSON, one retry, timeout-guarded). Without a key — or on any provider failure — intake degrades to keyword rules and **never blocks**. A safety floor (fire, flood, sewage, …) **raises** urgency and never lowers it, in every mode.
-3. **Fail-closed defaults** — `other` categories, keyword-mode results, low-confidence answers, and model disagreements are flagged for human review instead of auto-routing.
-4. **Routing + audit** — reports map to seeded local authorities; every classification and routing decision is appended to an audit log.
+1. [Overview](#overview)
+2. [The Problem](#the-problem)
+3. [Our Solution](#our-solution)
+4. [Features](#features)
+5. [How It Works](#how-it-works)
+6. [AI Methodology](#ai-methodology)
+7. [Tech Stack](#tech-stack)
+8. [Quickstart](#quickstart)
+9. [Configuration](#configuration)
+10. [Telegram Bot](#telegram-bot)
+11. [API Reference](#api-reference)
+12. [Testing](#testing)
+13. [Screenshots](#screenshots)
+14. [Team](#team)
+15. [Known Limitations](#known-limitations)
+16. [Roadmap](#roadmap)
+17. [License](#license)
+
+---
+
+## Overview
+
+Reporta lets citizens report local service-delivery problems through a **web form** or a **Telegram bot**. Every report is:
+
+- **classified** for urgency, using an AI model when available and keyword rules otherwise,
+- **routed** to the local authority responsible for the defect, and
+- **tracked** on a priority dashboard with a full audit trail.
+
+The system is designed to **degrade gracefully and fail closed**: intake never blocks on the AI, safety-critical reports are never under-prioritised, and uncertain cases go to a human instead of being auto-routed.
+
+**Live product:** https://reporta.hingaai.tech (public intake, login-protected dashboard)
+
+---
+
+## The Problem
+
+Physical service-delivery defects (potholes, burst pipes, overflowing waste, broken streetlights, damaged public facilities) persist in cities long after citizens first report them. Feasibility research in Uganda and an independent market study of Karachi, Pakistan, describe the same failure from opposite ends.
+
+| | Uganda | Karachi, Pakistan |
+|---|---|---|
+| **State of reporting** | The pipeline barely exists. | Complaint infrastructure exists at scale. |
+| **Evidence** | No low-friction, persistent channel to the body responsible for fixing a defect. Existing channels (a call to a councillor, a radio phone-in, a WhatsApp group that dies within a week) are one-off and unaccountable. No verified public baseline exists for how long civic incidents take to resolve. | The Pakistan Citizen's Portal has processed over six million complaints, nearly one million of them in municipal services, yet reported satisfaction in that category is 47%. |
+| **Failure mode** | Citizens cannot reach the right body persistently. | Responsibility for one visible problem is split across multiple authorities by service and exact location. Duplicate reports arrive as unrelated tickets. A complaint marked resolved is not independently verified as fixed. |
+
+### The gap
+
+The problem is not only whether a citizen *can* report. It is whether each report is:
+
+1. **classified** consistently,
+2. **routed** to the authority that actually owns the defect,
+3. **linked to duplicates** so recurring problems become visible, and
+4. **closed** only when the outcome is confirmed.
+
+Reports that fail any of these steps die quietly. The cost, in both markets, is avoidable accidents and health hazards, wasted public spending, and citizens who stop reporting because nothing shows that reporting changes anything.
+
+---
+
+## Our Solution
+
+This prototype demonstrates the **front of that pipeline**: classification with a keyword fallback and a safety floor, routing suggestions with human review on uncertain cases, and status tracking on an auditable dashboard.
+
+Duplicate detection and citizen-confirmed resolution are on the [roadmap](#roadmap).
+
+---
+
+## Features
+
+| Area | Capability |
+|---|---|
+| **Intake** | Public web form and a Telegram bot with a guided category-then-description flow |
+| **Classification** | Hosted LLM for urgency and category when available; keyword rules otherwise |
+| **Safety** | Raise-only safety floor for hazard terms (fire, flood, sewage, ...) in every mode |
+| **Human oversight** | Fail-closed review flags for uncertain, default, or disputed classifications |
+| **Routing** | Reports mapped to seeded local authorities |
+| **Auditability** | Append-only log of every classification and routing decision |
+| **Dashboard** | Priority view with filters for category, status, review flag, and source |
+
+---
+
+## How It Works
+
+```mermaid
+flowchart LR
+    A[Citizen] --> B[Web form]
+    A --> C[Telegram bot]
+    B --> D[POST /api/reports]
+    C --> D
+    D --> E{AI available?}
+    E -- Yes --> F[LLM classification]
+    E -- No or failure --> G[Keyword rules]
+    F --> H[Safety floor]
+    G --> H
+    H --> I{Needs review?}
+    I -- Yes --> J[Flag for human review]
+    I -- No --> K[Route to authority]
+    J --> L[(Audit log)]
+    K --> L
+    L --> M[Priority dashboard]
+```
+
+1. **Intake.** A report arrives via the web form at `/` or the Telegram bot.
+2. **Classification.** With `GROQ_API_KEY` set, a hosted LLM classifies urgency and suggests a category. Without a key, or on any provider failure, intake degrades to keyword rules and **never blocks**.
+3. **Safety floor.** Hazard terms raise urgency to a minimum level. The floor only raises and never lowers.
+4. **Review gate.** Uncertain or default results are flagged for a human instead of being auto-routed.
+5. **Routing and audit.** Reports map to seeded local authorities, and every decision is appended to the audit log.
+
+---
+
+## AI Methodology
+
+### Classification
+
+When `GROQ_API_KEY` is set, each report is sent to the model, which must return **strict JSON**. The call is timeout-guarded (`CLASSIFIER_TIMEOUT`, default 5 seconds) and retried once on a malformed or failed response.
+
+### Graceful degradation
+
+If there is no key, or the provider times out or errors, intake falls back to keyword rules. Submitting a report never depends on the AI being up.
+
+### Safety floor
+
+Safety-term matches (fire, flood, sewage, ...) raise urgency to at least `CLASSIFIER_SAFETY_FLOOR` (default `5`). The floor is **raise-only**: it never lowers urgency, in both AI and keyword modes.
+
+### Fail-closed human review
+
+A report is flagged for human review instead of being auto-routed when any of the following holds:
+
+| Trigger | Why |
+|---|---|
+| Category is `other` | No reliable authority match |
+| Classified in keyword mode | Rules are blunt, so a person should confirm |
+| Confidence below `CLASSIFICATION_CONFIDENCE_FLOOR` (default `0.60`) | The model is unsure |
+| Model disagreements | Conflicting signals should not be auto-resolved |
+
+### Auditability
+
+Every classification and routing decision is appended to an audit log so outcomes can be reviewed after the fact.
+
+### Limits we state openly
+
+Confidence is model-reported, not calibrated. The review threshold is a heuristic, not a measured operating point. Keyword matching is blunt and can over-flag, which is the safe direction.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3.14 |
+| Backend | FastAPI |
+| Database | SQLite (no database server required) |
+| AI | Groq-hosted LLM (`openai/gpt-oss-120b` in the deployed instance) |
+| Messaging | Telegram Bot API (outbound long-polling) |
+| Packaging | Docker, Docker Compose |
+| Testing | pytest |
+
+**API usage**
+
+- **Groq API:** classifies urgency and suggests a category for each report.
+- **Telegram Bot API:** citizen intake channel.
+- Voice-note transcription (`WHISPER_MODEL`) is planned and not enabled in this deployment.
+
+---
 
 ## Quickstart
+
+**Prerequisites:** Python 3.14 (or Docker).
 
 ```bash
 git clone https://github.com/Stjr2090/civic-issue-triage
@@ -32,43 +196,52 @@ python scripts/seed.py          # seeds 8 sample authorities
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Open `http://localhost:8000` for the intake form and `http://localhost:8000/dashboard` for the dashboard.
+| URL | Purpose |
+|---|---|
+| `http://localhost:8000` | Intake form |
+| `http://localhost:8000/dashboard` | Priority dashboard |
 
-With Docker:
+**With Docker**
 
 ```bash
 docker compose up --build       # PORT env var overrides the default 8000
 ```
 
+---
+
 ## Configuration
 
-All environment variables are **optional** — the app runs with sensible defaults and degrades gracefully.
+All environment variables are **optional**. The app runs with sensible defaults and degrades gracefully.
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `DATABASE_PATH` | `./data/civic.db` | SQLite database location |
 | `PORT` | `8000` | Server port (Docker image) |
-| `GROQ_API_KEY` | — | Enables AI classification; without it, keyword fallback is used |
+| `GROQ_API_KEY` | none | Enables AI classification; without it, keyword fallback is used |
 | `GROQ_MODEL` | `openai/gpt-oss-120b` (deployed) | Chat model used for classification; set a chat-capable model available on your account |
-| `WHISPER_MODEL` | — | Voice-note transcription (audio intake); coming soon, not enabled in this deployment |
+| `WHISPER_MODEL` | none | Voice-note transcription (audio intake); coming soon, not enabled in this deployment |
 | `CLASSIFIER_TIMEOUT` | `5` | Seconds before the AI call gives up and falls back |
 | `CLASSIFIER_SAFETY_FLOOR` | `5` | Minimum urgency for safety-term matches (raise-only) |
 | `CLASSIFICATION_CONFIDENCE_FLOOR` | `0.60` | Confidence below this sends a report to human review |
-| `TELEGRAM_BOT_TOKEN` | — | Enables the Telegram bot |
+| `TELEGRAM_BOT_TOKEN` | none | Enables the Telegram bot |
 | `API_BASE` | `http://localhost:8000` | API URL the Telegram bot talks to |
 
-Secrets belong in `.env` (already excluded via `.gitignore` and `.dockerignore`) — never in the repo.
+> **Security note:** secrets belong in `.env` (already excluded via `.gitignore` and `.dockerignore`), never in the repository.
 
-## Telegram bot
+---
+
+## Telegram Bot
 
 ```bash
 export TELEGRAM_BOT_TOKEN=your-token
 python -m app.telegram_bot
 ```
 
-The bot uses outbound long-polling only — no inbound ports. A guided conversation (category → description) files one report with the reporter's handle as source attribution.
+The bot uses **outbound long-polling only**, so no inbound ports are needed. A guided conversation (category, then description) files one report, with the reporter's handle recorded as source attribution.
 
-## API
+---
+
+## API Reference
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -78,9 +251,11 @@ The bot uses outbound long-polling only — no inbound ports. A guided conversat
 | `PATCH` | `/api/reports/{id}/status` | Update report status |
 | `GET` | `/api/stats` | Dashboard aggregates |
 | `GET` | `/api/authorities` | Seeded local authorities |
-| `GET` | `/api/route/{id}` | Route a report to its matching authority (409 when no match) |
+| `GET` | `/api/route/{id}` | Route a report to its matching authority (`409` when no match) |
 | `GET` | `/` | Intake form |
 | `GET` | `/dashboard` | Priority dashboard |
+
+---
 
 ## Testing
 
@@ -88,28 +263,63 @@ The bot uses outbound long-polling only — no inbound ports. A guided conversat
 pytest
 ```
 
-27 tests; they require no API keys and no network — CI-safe by design.
+The suite contains 27 tests. They require no API keys and no network access, so they are safe to run in CI.
 
-## Known limitations
+---
 
-This is a hackathon prototype; we would rather state its edges than hide them:
+## Screenshots
+
+<!-- Screenshots are being added by Stephen. Replace the placeholders below with image links. -->
+
+| Intake form | Priority dashboard |
+|---|---|
+| *Coming soon* | *Coming soon* |
+
+---
+
+## Team
+
+| Name | Role |
+|---|---|
+| **Tumusiime Stephen** | Backend and API integrations |
+| **Muhammad Younas** | Front end and product design |
+| **Sadaf Mustafa** | Demo and presentation |
+| **Aisha P** | Feasibility research and final submission |
+
+---
+
+## Known Limitations
+
+This is a hackathon prototype. We would rather state its edges than hide them.
 
 - **Demo-grade auth.** Intake is public by design; dashboard mutation endpoints are unauthenticated. Add authentication before any real deployment.
-- **Single-node SQLite.** One file; schema changes now run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
+- **Single-node SQLite.** One file. Schema changes run through a small idempotent SQL migration loader (`db/migrations`) rather than a full migration framework, and heavier schema work still favors a fresh volume and re-seed.
 - **Confidence is model-reported, not calibrated.** The review threshold is a sensible heuristic, not a measured operating point.
 - **Keyword fallback is blunt.** Substring matching can over-flag (the safe direction), and the safety terms are not an exhaustive multilingual list.
 - **Intake is unthrottled.** No rate limiting on either intake path.
-- **Routing records intent, it does not dispatch.** Authorities and contacts are seed data; no SMS/email is sent.
+- **Routing records intent, it does not dispatch.** Authorities and contacts are seed data; no SMS or email is sent.
 - **Reporter fields are stored in plaintext.** Real deployments need encryption and a retention policy.
+
+---
 
 ## Roadmap
 
-- Authentication for dashboard operators
-- PostgreSQL + schema migrations
-- Notification dispatch (SMS/email) on routing
-- Calibrated confidence thresholds and rate limiting
-- Deeper multilingual intake support
+- [ ] Authentication for dashboard operators
+- [ ] PostgreSQL and schema migrations
+- [ ] Notification dispatch (SMS/email) on routing
+- [ ] Calibrated confidence thresholds and rate limiting
+- [ ] Deeper multilingual intake support
+- [ ] Duplicate detection across reports
+- [ ] Citizen-confirmed resolution
+
+---
 
 ## License
 
-[MIT](LICENSE)
+Released under the [MIT License](LICENSE).
+
+<div align="center">
+
+*Built for the NYLP AI Hackathon 2026.*
+
+</div>
